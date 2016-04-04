@@ -1,12 +1,12 @@
-package uwstout.resturantpicker;
+package uwstout.resturantpicker.Activities;
 
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.Timer;
+import uwstout.resturantpicker.Fragments.BlankFragment;
+import uwstout.resturantpicker.R;
 
 public class MainActivity extends AppCompatActivity{
 
