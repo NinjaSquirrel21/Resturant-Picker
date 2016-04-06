@@ -10,11 +10,6 @@ import uwstout.resturantpicker.R;
 
 public class MainActivity extends AppCompatActivity{
 
-/*
-    public void onFragmentInteraction(Uri uri){
-
-    }
-*/
     private static Button button = null;
 
     @Override

@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="CUCKS1"
+        android:text="Test1"
         android:id="@+id/textView2"
         android:layout_gravity="left|top" />
 
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="CUCKS2"
+        android:text="Test2"
         android:id="@+id/textView3"
         android:layout_gravity="center_horizontal|top" />
 
