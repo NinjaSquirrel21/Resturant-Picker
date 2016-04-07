@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -25,12 +26,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         public static class ViewHolder extends RecyclerView.ViewHolder {
             protected TextView titleText;
             protected TextView contentText;
-            protected CardView card;
+            protected ImageView foodPic;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 titleText = (TextView) itemView.findViewById(R.id.restaurant_title);
                 contentText = (TextView) itemView.findViewById(R.id.data);
+                foodPic = (ImageView) itemView.findViewById(R.id.foodImage);
               //  card = (CardView) itemView;
             }
         }
@@ -57,6 +59,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             Restaurant restaurant = restaurants.get(position);
             holder.titleText.setText(restaurant.getName());
             holder.contentText.setText(restaurant.getdistance());
+            holder.foodPic.setImageResource(R.drawable.burger);
+
          //   holder.card.setCardBackgroundColor(restaurant.getcost());
 
         }
