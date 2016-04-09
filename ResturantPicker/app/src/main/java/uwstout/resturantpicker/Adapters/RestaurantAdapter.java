@@ -25,7 +25,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         public static class ViewHolder extends RecyclerView.ViewHolder {
             protected TextView titleText;
             protected TextView contentText;
-            protected CardView card;
 
             public ViewHolder(View itemView) {
                 super(itemView);

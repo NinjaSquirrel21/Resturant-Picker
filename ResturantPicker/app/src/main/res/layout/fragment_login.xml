@@ -1,0 +1,96 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="uwstout.resturantpicker.Fragments.LoginFragment">
+
+    <RelativeLayout
+        android:id="@+id/fragment_login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="left|center_vertical">
+
+
+        <ImageView
+            android:layout_width="610dp"
+            android:layout_height="79dp"
+            android:scaleType="fitXY"
+            android:id="@+id/image_logo"
+            android:src="@drawable/taco"
+            android:layout_above="@+id/editTextUsername"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/textView4"
+            android:layout_alignRight="@+id/editTextUsername"
+            android:layout_alignEnd="@+id/editTextUsername" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Account"
+            android:id="@+id/createAccountButton"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:id="@+id/loginButton"
+            android:layout_alignBottom="@+id/createAccountButton"
+            android:layout_toRightOf="@+id/createAccountButton"
+            android:layout_alignRight="@+id/editTextPassword"
+            android:layout_alignEnd="@+id/editTextPassword"
+            android:layout_below="@+id/editTextPassword" />
+
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:id="@+id/editTextPassword"
+            android:layout_above="@+id/createAccountButton"
+            android:layout_alignLeft="@+id/textView"
+            android:layout_alignStart="@+id/createAccountButton" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/editTextUsername"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:layout_above="@+id/editTextPassword"
+            android:layout_alignLeft="@+id/editTextPassword"
+            android:layout_alignStart="@+id/editTextPassword"
+            android:layout_alignRight="@+id/editTextPassword"
+            android:layout_alignEnd="@+id/editTextPassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:id="@+id/textView"
+            android:layout_alignBottom="@+id/editTextUsername"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingLeft="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:id="@+id/textView4"
+            android:layout_alignBottom="@+id/editTextPassword"
+            android:layout_alignRight="@+id/textView"
+            android:layout_alignEnd="@+id/textView" />
+
+
+
+    </RelativeLayout>
+
+</FrameLayout>

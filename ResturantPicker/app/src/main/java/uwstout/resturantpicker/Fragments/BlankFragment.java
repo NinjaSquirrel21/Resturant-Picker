@@ -28,7 +28,7 @@ public class BlankFragment extends Fragment /*implements View.OnClickListener*/{
     private String mParam1;
     private String mParam2;
 
-    private static int PRESS_COUNT = 0;
+
 
     //private OnFragmentInteractionListener mListener;
 
