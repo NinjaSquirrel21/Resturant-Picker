@@ -106,7 +106,6 @@ public class UserActivity extends AppCompatActivity implements OnConnectionFaile
             @Override
             public void onClick(View v) {
                 try {
-                    url = new URL(getCurrentURL(500));
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
@@ -322,12 +321,8 @@ public class UserActivity extends AppCompatActivity implements OnConnectionFaile
         sb.append(URLPART3);
 
         Log.v("Location", mLatitudeText + " ~ " + mLongitudeText);
-
-
-        String newURL = "https://maps.googleapis.com/maps/api/place/search/json?radius=1500&sensor=false&key=AIzaSyAujea38TpoRvapEhrt36y1HEpXGckPqT8&location=44.8703361,-91.936436&type=restaurant";
-
-
-        return newURL;
+        Log.v("toString", sb.toString());
+        return sb.toString();
     }
 
 }
