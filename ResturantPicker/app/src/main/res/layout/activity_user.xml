@@ -10,8 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/queryButton"
+        android:layout_below="@+id/place_autocomplete_fragment"
+        android:layout_centerHorizontal="true"
+        android:text="Query" />
 
     <GridLayout
         android:id="@+id/card_fragment_container"
@@ -19,7 +25,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/place_autocomplete_fragment">
+        android:layout_below="@id/queryButton">
 
 
     </GridLayout>
