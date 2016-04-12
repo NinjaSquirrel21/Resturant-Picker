@@ -106,6 +106,7 @@ public class UserActivity extends AppCompatActivity implements OnConnectionFaile
             @Override
             public void onClick(View v) {
                 try {
+                    url = new URL(getCurrentURL(1500));
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
