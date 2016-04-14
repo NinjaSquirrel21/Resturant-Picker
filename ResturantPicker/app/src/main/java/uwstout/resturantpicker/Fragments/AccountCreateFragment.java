@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import uwstout.resturantpicker.Objects.CredentialsManager;
 import uwstout.resturantpicker.R;
 
 public class AccountCreateFragment extends Fragment{
@@ -49,11 +50,13 @@ public class AccountCreateFragment extends Fragment{
                 } else if (mListener.usernameExists(username)) {
                     mListener.sendToast("Username already exists! Please revise input.");
                 } else {
-                    mListener.sendToast("Account creation successful!");
-                    mListener.createAccount(username, password);
-
-                    //getActivity().setContentView(R.layout.activity_login);
-                    mListener.swap("login", "arg");
+                    //TODO: Handle age and account type
+                    if(mListener.createAccount(CredentialsManager.AccountType.CUSTOMER, username, password, -1)){
+                        mListener.sendToast("Account creation successful!");
+                        mListener.swap("login", "arg");
+                    }else{
+                        mListener.sendToast("Error when creating account.");
+                    }
 
                 }
             }
@@ -84,7 +87,7 @@ public class AccountCreateFragment extends Fragment{
     public interface AccountCreateFragmentInterface {
         void sendToast(String message);
         boolean usernameExists(String username);
-        boolean createAccount(String username, String password);
+        boolean createAccount(CredentialsManager.AccountType accountType, String username, String password, Object args);
         void swap(String fragment, String args);
     }
 }

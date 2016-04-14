@@ -13,20 +13,21 @@ import uwstout.resturantpicker.Fragments.BlankFragment;
 import uwstout.resturantpicker.Fragments.LoginFragment;
 
 import uwstout.resturantpicker.Objects.CredentialsManager;
+import uwstout.resturantpicker.Objects.DataManager;
 import uwstout.resturantpicker.R;
 
 public class LoginActivity extends AppCompatActivity implements LoginFragment.LoginFragmentInterface,
         AccountCreateFragment.AccountCreateFragmentInterface{
 
     private static Toast toast = null;
-    private static CredentialsManager userbase = null;
+    private static DataManager database = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        userbase = new CredentialsManager();
+        database = new DataManager();
 
         if (findViewById(R.id.fragment_container) != null) {
             if (savedInstanceState != null) return;
@@ -84,19 +85,20 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     //implemented via AccountCreateFragmentInterface
     public boolean usernameExists(String username){
-        if(userbase != null){ return userbase.usernameExists(username);}
+        //String pos = "" + userbase.usernameExists(username);
+        if((database != null)&&(database.getCredentialsManager().usernameExists(username))){return true;}
         else return false;
     }
 
     //implemented via AccountCreateFragmentInterface
-    public boolean createAccount(String username, String password){
-        if(userbase != null) return userbase.addNewUser(username, password);
+    public boolean createAccount(CredentialsManager.AccountType accountType, String username, String password, Object args){
+        if(database != null) return database.getCredentialsManager().addNewUser(accountType, username, password, args);
         else return false;
     }
 
     //implemented via LoginFragmentInterface
     public boolean login(String username, String password){
-        if(userbase != null) return userbase.login(username, password);
+        if(database != null) return database.login(username, password);
         else return false;
     }
 }

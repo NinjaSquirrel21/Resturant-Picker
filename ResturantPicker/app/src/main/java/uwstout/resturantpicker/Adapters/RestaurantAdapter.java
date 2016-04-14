@@ -40,8 +40,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public RestaurantAdapter(List<Restaurant> myResturants) {
-            restaurants = myResturants;
+        public RestaurantAdapter(List<Restaurant> myRestaurants) {
+            restaurants = myRestaurants;
         }
 
         // Create new views (invoked by the layout manager)
