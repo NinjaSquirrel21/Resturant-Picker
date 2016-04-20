@@ -19,6 +19,9 @@ public class Restaurant {
     private double cost;
     private CredentialsManager.ServiceType serviceType;
     private int congestionLevel;
+    private String address;
+    private long rating;
+    private String pictureID;
 
     public Restaurant(){
         this.name = "Test1";
@@ -46,6 +49,14 @@ public class Restaurant {
         this.menu = menu;
     }
 
+    public Restaurant(String name, String address, String googlePlacesID, long rating, String pictureID){
+        this.name = name;
+        this.address = address;
+        this.googlePlacesID = googlePlacesID;
+        this.rating = rating;
+        this.pictureID = pictureID;
+    }
+
     //returns the average values for all food items in the food spectrum
     private void calculateMenuCharacteristics(){
 
@@ -68,12 +79,24 @@ public class Restaurant {
         return this.name;
     }
 
+    public String getAddress() {
+        return this.address;
+    }
+
+    public long getRating() {
+        return this.rating;
+    }
+
     public String getdistance(){
         return this.distance;
     }
 
     public double getcost(){
         return this.cost;
+    }
+
+    public String getPictureID(){
+        return this.pictureID;
     }
 
     public RestaurantDatabase.Genres getGenre(){
@@ -91,4 +114,5 @@ public class Restaurant {
     public boolean existsInDB(){
         return this.restaurantUserAccount != null;
     }
+
 }
