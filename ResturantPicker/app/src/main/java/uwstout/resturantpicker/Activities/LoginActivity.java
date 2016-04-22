@@ -14,6 +14,8 @@ import uwstout.resturantpicker.Fragments.LoginFragment;
 
 import uwstout.resturantpicker.Objects.CredentialsManager;
 import uwstout.resturantpicker.Objects.DataManager;
+import uwstout.resturantpicker.Objects.Restaurant;
+import uwstout.resturantpicker.Objects.RestaurantDatabase;
 import uwstout.resturantpicker.R;
 
 public class LoginActivity extends AppCompatActivity implements LoginFragment.LoginFragmentInterface,
@@ -27,7 +29,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        database = new DataManager();
+        database = DataManager.getInstance();
+        loadDBWithTestRestaurants();
 
         if (findViewById(R.id.fragment_container) != null) {
             if (savedInstanceState != null) return;
@@ -37,6 +40,22 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, firstFragment).commit();
         }
+    }
+
+    private void loadDBWithTestRestaurants(){
+        //TODO: implement menus with food objects to each of these restaurants, and attempt to log transactions between them and users
+        //NOTE: I know these restuarant objects are not representative. I wanted to only match places ID at the time
+        Restaurant logjam = new Restaurant("Log Jam", "address", "ChIJZ8EG-aF7-IcRk6UJVSnQMOY", 1, "pictureID");
+        logjam.setGenre(RestaurantDatabase.Genres.FASTFOOD);
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "logjamUN", "password", logjam);
+
+        Restaurant jeffs = new Restaurant("Jeff's Pizza", "address", "ChIJEerOHaJ7-IcRhvqsXhVLrrM", 1, "pictureID");
+        jeffs.setGenre(RestaurantDatabase.Genres.PIZZA);
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "jeffsUN", "password", jeffs);
+
+        Restaurant rawdeal = new Restaurant("Raw Deal", "address", "ChIJpzKPC6J7-IcRjaZaIa1HGGE", 1, "pictureID");
+        rawdeal.setGenre(RestaurantDatabase.Genres.FASTFOOD);
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "rawDealUN", "password", rawdeal);
     }
 
     //implemented through the LoginFragmentInterface
@@ -92,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     //implemented via AccountCreateFragmentInterface
     public boolean createAccount(CredentialsManager.AccountType accountType, String username, String password, Object args){
-        if(database != null) return database.getCredentialsManager().addNewUser(accountType, username, password, args);
+        if(database != null) return database.createAccount(accountType, username, password, args);
         else return false;
     }
 

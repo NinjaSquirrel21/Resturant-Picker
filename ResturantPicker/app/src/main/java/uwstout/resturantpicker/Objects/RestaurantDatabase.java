@@ -1,6 +1,7 @@
 package uwstout.resturantpicker.Objects;
 
 import java.util.Vector;
+import android.util.Log;
 
 /**
  * Created by Barrett on 4/12/2016.
@@ -60,7 +61,10 @@ public class RestaurantDatabase{
     //no duplicate googlePlacesIDs are allowed
     public boolean addRestaurant(Restaurant restaurant){
         int i = 0;
+
         Genres tempGenre = restaurant.getGenre();
+        if(tempGenre == null) return false;
+
         for(Genres genre : Genres.values()){
             if(genre.getValue() == tempGenre.getValue()){
 
@@ -73,6 +77,7 @@ public class RestaurantDatabase{
                     this.restaurants.get(i).remove(tableDepth);
                 }
                 this.restaurants.get(i).add(restaurant);
+                //Log.e("Restaurant added: ", restaurant.getGooglePlacesID());
                 return true;
             }
             i++;
@@ -87,7 +92,8 @@ public class RestaurantDatabase{
                 if(this.restaurants.get(i) != null) {
                     for (int j = 0; j < this.restaurants.get(i).size(); j++) {
                         Restaurant currRestaurant = this.restaurants.get(i).get(j);
-                        if (currRestaurant.getGooglePlacesID().equals(googlePlacesID) && currRestaurant.existsInDB()) {
+                        Log.e("currRest : ", currRestaurant.getGooglePlacesID() +  " " + googlePlacesID);
+                        if (currRestaurant.getGooglePlacesID().equals(googlePlacesID) /*&& currRestaurant.existsInDB()*/) {
                             return currRestaurant;
                         }
                     }
@@ -111,6 +117,18 @@ public class RestaurantDatabase{
             }
         }
         return null;
+    }
+
+    public void toStringIDs(){
+        if(this.restaurants != null) {
+            for (int i = 0; i < Genres.NUMBEROFGENRES.getValue(); i++) {
+                if(this.restaurants.get(i) != null) {
+                    for (int j = 0; j < this.restaurants.get(i).size(); j++) {
+                        Log.v("Place ID: ", this.restaurants.get(i).get(j).getGooglePlacesID());
+                    }
+                }
+            }
+        }
     }
 
     /*

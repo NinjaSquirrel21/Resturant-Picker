@@ -33,7 +33,7 @@ public class CredentialsManager {
     //public function written to get access of "tableDepth" most recent transactions for each genre
     public Vector<Vector<Transaction>> fetchMostRecentFromEachGenreByUser(int tableDepth, String username, AccountType accountType){
         if(accountType != AccountType.CUSTOMER){return null;}
-        UserData user = fetchUserDataByName(username, accountType);
+        UserData user = fetchUserDataByName(username);
 
         if(user != null){
             return ((CustomerUserData)user).fetchMostRecentFromEachGenre(tableDepth);
@@ -42,7 +42,7 @@ public class CredentialsManager {
 
     public Transaction fetchMostRecentFromSpecificGenreByUser(String username, AccountType accountType, RestaurantDatabase.Genres genre){
         if(accountType != AccountType.CUSTOMER){return null;}
-        UserData user = fetchUserDataByName(username, accountType);
+        UserData user = fetchUserDataByName(username);
 
         if(user != null){
             return ((CustomerUserData)user).fetchMostRecentFromSpecificGenre(genre);
@@ -50,8 +50,18 @@ public class CredentialsManager {
 
     }
 
+    public AccountType getAccountTypeByUsername(String username){
+        if(this.users != null) {
+            for(int i = 0; i < NUMBER_OF_USERS; i++){
+                UserData tempUser = users.get(i);
+                if(tempUser.usernameMatch(username)){return tempUser.getAccountType();}
+            }
+        }
+        return null;
+    }
+
     //private function written to have access to user's data
-    private UserData fetchUserDataByName(String username, AccountType accountType){
+    private UserData fetchUserDataByName(String username){
         if(this.users != null) {
             for(int i = 0; i < NUMBER_OF_USERS; i++){
                 UserData tempUser = users.get(i);
@@ -129,6 +139,7 @@ class UserData{
     public boolean usernameMatch(String username){
         return (username.equals(this.username));
     }
+    public CredentialsManager.AccountType getAccountType(){return this.accountType;}
 
 }
 

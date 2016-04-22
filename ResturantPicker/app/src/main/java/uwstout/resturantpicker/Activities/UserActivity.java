@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Vector;
 
 import uwstout.resturantpicker.Adapters.RestaurantAdapter;
+import uwstout.resturantpicker.Objects.DataManager;
 import uwstout.resturantpicker.Objects.Restaurant;
 import uwstout.resturantpicker.R;
 
@@ -70,12 +71,16 @@ public class UserActivity extends AppCompatActivity{
     private static List<Restaurant> demoData;
     static RecyclerView recyclerView;
     public Context context;
+    private static DataManager database;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
+        database = DataManager.getInstance();
+        //database.getRestaurantDatabase().toStringIDs();
 
         context = getApplicationContext();
 
@@ -258,18 +263,21 @@ public class UserActivity extends AppCompatActivity{
                                 // Log.v("Picture String", "" + pictureString);
                             }
 
-                            Restaurant temp = new Restaurant(restName,address,id,rating,pictureString);
+                            //TODO: make a schnazzy filter!
+                            //sample filter, adds restaurants to the screen only if they exist in DB (fetch by place ID)
+                            //NOTE: The db is being populated with 3 hard-coded entries, which only have the place ID. Update the method in LoginActivity if you need to add more information to it
+                            if ((database != null) && (database.getRestaurantDatabase().fetchCopyOfRestaurantByID(id) != null)){
+                                Restaurant temp = new Restaurant(restName, address, id, rating, pictureString);
 
-                            localRestaurants.add(temp);
-                            Log.v("Restaurant names", ""+ "~" + restName + "~" + address + "~" + id);
+                                localRestaurants.add(temp);
+                                Log.v("Restaurant names", "" + "~" + restName + "~" + address + "~" + id);
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-
                 }
-
                 return null;
             }
 

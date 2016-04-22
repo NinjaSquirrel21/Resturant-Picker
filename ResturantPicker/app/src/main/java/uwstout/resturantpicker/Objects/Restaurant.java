@@ -103,6 +103,8 @@ public class Restaurant {
         return this.genre;
     }
 
+    public void setGenre(RestaurantDatabase.Genres genre){this.genre = genre;}
+
     public void updateCongestionLevel(int congestionLevel){
         this.congestionLevel = congestionLevel;
     }
