@@ -235,6 +235,10 @@ public class UserActivity extends AppCompatActivity{
                     String id = "";
                     String pictureString = "";
 
+                    //perhaps we should fork each iteration in parallel?
+                    //each iteration could have n^2 worst case runtime, assumed for filtering.
+                    //being able to do this in parallel really helps, since the larger the data set, the higher the chance it will get closer to n^2 complexity
+                    //since eadch entry is unique
                     for(int j=0;j<len;j++)
                     {
                         rating = 0;

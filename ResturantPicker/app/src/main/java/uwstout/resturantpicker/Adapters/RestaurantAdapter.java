@@ -91,7 +91,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     ViewHolder.this.restaurant.setGenre(RestaurantDatabase.Genres.PIZZA);
                     Log.v("Rest. toString: ", ViewHolder.this.restaurant.toString());
                     if(temp != null) {
-                        Log.v("Test:", "tessstttt");
                         itemsSold.add(temp);
                         finalPrice += temp.getValue();
                     }
@@ -102,7 +101,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     DataManager.getInstance().completeTransaction(new Transaction(customer, vendor, vendorGoogleId, transactionTime, finalPrice, itemsSold));
 
                     //Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
-                    DataManager.getInstance().getPreferenceCache().printCache();
+                    //DataManager.getInstance().getPreferenceCache().printCache();
+                    //DataManager.getInstance().getRestaurantDatabase().dumpDB();
                 }
             });
         }

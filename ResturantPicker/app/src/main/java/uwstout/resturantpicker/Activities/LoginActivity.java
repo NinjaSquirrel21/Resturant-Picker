@@ -69,6 +69,25 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         rawdeal.setGenre(RestaurantDatabase.Genres.FASTFOOD);
         rawdeal.addMenuItem(new Food(10, 20, 30, 40, 50, "test", RestaurantDatabase.Genres.FASTFOOD, 4.50));
         this.createAccount(CredentialsManager.AccountType.RESTAURANT, "rawDealUN", "password", rawdeal);
+
+
+
+        //garbage entries to test performance problems with most filters being at least n^2 complexity
+        Restaurant g1 = new Restaurant("g1", "address", "g1", 1, "pictureID");
+        g1.setGenre(RestaurantDatabase.Genres.CHINESE);
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "g1UN", "password", g1);
+
+        Restaurant g2 = new Restaurant("g2", "address", "g2", 1, "pictureID");
+        g2.setGenre(RestaurantDatabase.Genres.CHINESE);
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "g1UN", "password", g2);
+
+        Restaurant g3 = new Restaurant("Log Jam", "address", "g3", 1, "pictureID");
+        g3.setGenre(RestaurantDatabase.Genres.CHINESE);
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "g1UN", "password", g3);
+
+        Restaurant g4 = new Restaurant("Log Jam", "address", "g4", 1, "pictureID");
+        g4.setGenre(RestaurantDatabase.Genres.CHINESE);
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "g1UN", "password", g4);
     }
 
     //implemented through the LoginFragmentInterface
