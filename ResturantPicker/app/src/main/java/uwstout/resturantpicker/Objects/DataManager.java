@@ -1,6 +1,7 @@
 package uwstout.resturantpicker.Objects;
 
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.Vector;
@@ -22,6 +23,7 @@ public class DataManager{
     private PreferenceCache preferenceCache;
     private RestaurantDatabase restaurantDatabase;
     private String currentUser;
+    private CredentialsManager.AccountType currentUserType;
 
     private DataManager(){
         this.credentialsManager = new CredentialsManager();
@@ -32,7 +34,11 @@ public class DataManager{
         if(this.credentialsManager.login(username, password)){
             if(this.credentialsManager.getAccountTypeByUsername(username) == CredentialsManager.AccountType.CUSTOMER) {
                 this.preferenceCache = new PreferenceCache(username, credentialsManager);
+                this.currentUserType = CredentialsManager.AccountType.CUSTOMER;
+            }else{
+                this.currentUserType = CredentialsManager.AccountType.RESTAURANT;
             }
+            this.currentUser = username;
             return true;
         }
         return false;
@@ -41,6 +47,9 @@ public class DataManager{
     public boolean createAccount(CredentialsManager.AccountType accountType, String username, String password, Object args){
         if(accountType == CredentialsManager.AccountType.RESTAURANT){
             if(this.credentialsManager.addNewUser(accountType, username, password, args)){
+                Log.e("Rest. Account Created: ", username);
+
+                restaurantDatabase.toStringIDs();
                 //if restaurant account and adding new user successful
                 this.restaurantDatabase.addRestaurant((Restaurant) args);
             }
@@ -53,7 +62,9 @@ public class DataManager{
     }
 
     public boolean completeTransaction(Transaction transaction){
+        Log.v("completing...", transaction.toString());
         this.credentialsManager.commitTransaction(transaction);
+        Log.e("Max Genre: ", Integer.toString(transaction.getMaxGenre().getValue()));
         this.preferenceCache.updateGenreTable(transaction.getMaxGenre());
         return true;
     }
@@ -69,4 +80,8 @@ public class DataManager{
     public RestaurantDatabase getRestaurantDatabase(){
         return this.restaurantDatabase;
     }
+
+    public String getCurrentUser(){ return this.currentUser;}
+
+    public CredentialsManager.AccountType getCurrentUserType(){ return currentUserType; }
 }

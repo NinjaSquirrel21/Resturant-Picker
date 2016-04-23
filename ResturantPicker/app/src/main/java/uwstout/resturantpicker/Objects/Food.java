@@ -12,8 +12,9 @@ public class Food {
     private int umamiLevel;
     private String description;
     private RestaurantDatabase.Genres genre;
+    private double value;
 
-    public Food(int sweetLevel, int sourLevel, int bitterLevel, int saltyLevel, int umamiLevel, String description, RestaurantDatabase.Genres genre){
+    public Food(int sweetLevel, int sourLevel, int bitterLevel, int saltyLevel, int umamiLevel, String description, RestaurantDatabase.Genres genre, double value){
         this.sweetLevel = sweetLevel;
         this.sourLevel = sourLevel;
         this.bitterLevel = bitterLevel;
@@ -21,6 +22,7 @@ public class Food {
         this.umamiLevel = umamiLevel;
         this.description = description;
         this.genre = genre;
+        this.value = value;
     }
 
     public String getDescription(){
@@ -28,4 +30,18 @@ public class Food {
     }
     public int[] getFlavorSpectrum(){return new int[]{sweetLevel, sourLevel, bitterLevel, saltyLevel, umamiLevel};}
     public RestaurantDatabase.Genres getGenre(){return this.genre;}
+    public double getValue(){ return this.value;}
+
+    public String toString(){
+        String result = "";
+        result += this.sweetLevel + "\n";
+        result += this.sourLevel + "\n";
+        result += this.bitterLevel + "\n";
+        result += this.saltyLevel + "\n";
+        result += this.umamiLevel + "\n";
+        result += this.description + "\n";
+        result += this.genre + "\n";
+        result += this.value + "\n";
+        return result;
+    }
 }

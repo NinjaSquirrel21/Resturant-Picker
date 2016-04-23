@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,8 +23,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Vector;
+import java.util.Date;
 
+import uwstout.resturantpicker.Objects.CredentialsManager;
+import uwstout.resturantpicker.Objects.DataManager;
+import uwstout.resturantpicker.Objects.Food;
 import uwstout.resturantpicker.Objects.Restaurant;
+import uwstout.resturantpicker.Objects.Transaction;
 import uwstout.resturantpicker.R;
 
 /**
@@ -49,12 +56,53 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         protected TextView titleText;
         protected TextView contentText;
         protected ImageView foodPic;
+        protected Button buyButton;
+        protected Restaurant restaurant;
 
+
+        //added a click listener to act when "buy" is pressed, creating a new Transaction and running it through the data model. WIP
         public ViewHolder(View itemView) {
             super(itemView);
             titleText = (TextView) itemView.findViewById(R.id.restaurant_title);
             contentText = (TextView) itemView.findViewById(R.id.data);
             foodPic = (ImageView) itemView.findViewById(R.id.foodImage);
+            buyButton = (Button) itemView.findViewById(R.id.buy_button);
+            buyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    //load up a Transaction object
+
+                    String customer = DataManager.getInstance().getCurrentUser();
+                    String vendorGoogleId = ViewHolder.this.restaurant.getGooglePlacesID();
+                    String vendor = DataManager.getInstance().getCredentialsManager().getUsernameBasedOnGooglePlaceID(vendorGoogleId);
+                    Date transactionTime = new Date();
+                    Vector<Food> itemsSold = new Vector<Food>();
+                    double finalPrice = 0;
+
+                    //TODO: Make this more robust, perhaps iterate through a loop of possible options from the menu list.
+                    //      for example, say that when the menu button is pressed, a Fragment pops up on top of the RestaurantCard and
+                    //      contains a scrolling list of their menu and prices, with check boxes next to them.
+                    //      when the buy button is pressed, it would simply iterate through the whole list of check boxes generated and
+                    //      add all checked ones to a list of food items to add to the transaction
+
+                    Food temp = ViewHolder.this.restaurant.getFoodFromMenuByName("test");
+                    Log.v("Rest. name: ", ViewHolder.this.restaurant.getName() + vendorGoogleId);
+                    if(temp != null) {
+                        Log.v("Test:", "tessstttt");
+                        itemsSold.add(temp);
+                        finalPrice += temp.getValue();
+                    }
+
+                    finalPrice *= 0.055; //tax rate
+
+                    //String customer, String vendor, String vendorGoogleId, Date transactionTime, double finalPrice, Vector<Food> itemsSold
+                    DataManager.getInstance().completeTransaction(new Transaction(customer, vendor, vendorGoogleId, transactionTime, finalPrice, itemsSold));
+
+                    //Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
+                    DataManager.getInstance().getPreferenceCache().printCache();
+                }
+            });
         }
     }
 
@@ -145,9 +193,9 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         protected void onPostExecute(Long result) {
 
 
-            Restaurant restaurant = restaurants.get(currentPosition);
-            holder.titleText.setText(restaurant.getName());
-            holder.contentText.setText(restaurant.getAddress());
+            holder.restaurant = restaurants.get(currentPosition);
+            holder.titleText.setText(holder.restaurant.getName());
+            holder.contentText.setText(holder.restaurant.getAddress());
             holder.foodPic.setImageDrawable(d);
         }
     }

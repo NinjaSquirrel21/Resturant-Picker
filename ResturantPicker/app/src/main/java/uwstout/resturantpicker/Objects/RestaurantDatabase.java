@@ -77,7 +77,7 @@ public class RestaurantDatabase{
                     this.restaurants.get(i).remove(tableDepth);
                 }
                 this.restaurants.get(i).add(restaurant);
-                //Log.e("Restaurant added: ", restaurant.getGooglePlacesID());
+                Log.e("Restaurant added: ", restaurant.getGooglePlacesID());
                 return true;
             }
             i++;
@@ -124,7 +124,7 @@ public class RestaurantDatabase{
             for (int i = 0; i < Genres.NUMBEROFGENRES.getValue(); i++) {
                 if(this.restaurants.get(i) != null) {
                     for (int j = 0; j < this.restaurants.get(i).size(); j++) {
-                        Log.v("Place ID: ", this.restaurants.get(i).get(j).getGooglePlacesID());
+                        Log.e("Place ID: ", this.restaurants.get(i).get(j).getGooglePlacesID());
                     }
                 }
             }

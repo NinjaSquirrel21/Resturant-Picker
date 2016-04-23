@@ -1,6 +1,7 @@
 package uwstout.resturantpicker.Objects;
 
 import android.accounts.Account;
+import android.util.Log;
 
 import java.util.Vector;
 
@@ -10,8 +11,18 @@ import java.util.Vector;
  * TODO: Implement using actual database for users.
  */
 public class CredentialsManager {
-    public enum AccountType{CUSTOMER, RESTAURANT}
-    public enum ServiceType{DELIVERY, PICKUP}
+    public enum AccountType{
+        CUSTOMER(0), RESTAURANT(1);
+        private final int value;
+        AccountType(int value){this.value = value;}
+        public int getValue(){return this.value;}
+    }
+    public enum ServiceType{
+        DELIVERY(0), PICKUP(1);
+        private final int value;
+        ServiceType(int value){this.value = value;}
+        public int getValue(){return this.value;}
+    }
     private Vector<UserData> users;
     private static int NUMBER_OF_USERS = 0;
 
@@ -60,7 +71,7 @@ public class CredentialsManager {
         return null;
     }
 
-    //private function written to have access to user's data
+    //private function written to have access to user's data based on UN
     private UserData fetchUserDataByName(String username){
         if(this.users != null) {
             for(int i = 0; i < NUMBER_OF_USERS; i++){
@@ -70,6 +81,21 @@ public class CredentialsManager {
         }
         return null;
     }
+
+    //private function written to have access to user's data based on googlePlaceID
+    private UserData fetchUserDataByGooglePlaceID(String googlePlaceID){
+        if (this.users != null) {
+            for (int i = 0; i < NUMBER_OF_USERS; i++){
+                if (this.users.get(i).getAccountType().getValue() == AccountType.RESTAURANT.getValue()){
+                    if(((RestaurantUserData)this.users.get(i)).verifyGooglePlacesID(googlePlaceID)){
+                        return this.users.get(i);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     //Checks if username exists in userbase
     public boolean usernameExists(String username) {
         if (this.users != null) {
@@ -84,9 +110,11 @@ public class CredentialsManager {
 
     public int getUsernamePosition(String username) {
         if (this.users != null) {
-            for (int i = 0; i < this.users.size(); i++) {
-                if (this.users.get(i).usernameMatch(username)) {
-                    return i;
+            for (int i = 0; i < this.users.size(); i++){
+                if(this.users.get(i) != null) {
+                    if (this.users.get(i).usernameMatch(username)) {
+                        return i;
+                    }
                 }
             }
         }
@@ -110,20 +138,51 @@ public class CredentialsManager {
     //used to complete transaction from the UI, logging it both in the vendor and the customer's UserData
     public boolean commitTransaction(Transaction transaction){
         int customerPos = getUsernamePosition(transaction.getCustomer());
-        int vendorPos = getUsernamePosition(transaction.getVendor());
+
+        String vendorUsername = getUsernameBasedOnGooglePlaceID(transaction.getVendorGoogleId());
+        if(vendorUsername == null) {
+            Log.e("Userbase Error: ", "No user account found for restaurant: " + transaction.getVendorGoogleId());
+            return false;
+        }
+
+        int vendorPos = getUsernamePosition(vendorUsername);
         if((customerPos > -1) && (vendorPos > -1)){
             ((CustomerUserData)users.get(customerPos)).recordPurchase(transaction);
             ((RestaurantUserData)users.get(vendorPos)).recordSale(transaction);
             return true;
         }else return false;
     }
+
+    public String getUsernameBasedOnGooglePlaceID(String googlePlaceID){
+        if (this.users != null) {
+            for (int i = 0; i < NUMBER_OF_USERS; i++){
+                if (this.users.get(i).getAccountType().getValue() == AccountType.RESTAURANT.getValue()){
+                    String username = ((RestaurantUserData)this.users.get(i)).fetchUserAccountNameForGooglePlacesID(googlePlaceID);
+                    if(username != null) {
+                        Log.e("Username found: ", ((RestaurantUserData)this.users.get(i)).fetchUserAccountNameForGooglePlacesID(googlePlaceID) + "For ID " + googlePlaceID);
+                        return username;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public int getTotalNumberOfTransactions(String username){
+        UserData user = fetchUserDataByName(username);
+        if(user != null){
+            return user.getTotalNumberOfTransactions();
+        }
+        return -1;
+    }
 }
 
 //parent class used to hold user data
 class UserData{
-    private String username;
-    private String password;
-    private CredentialsManager.AccountType accountType;
+    protected String username;
+    protected String password;
+    protected CredentialsManager.AccountType accountType;
+    protected int totalNumberOfTransactions;
 
     public UserData(String username, String password, CredentialsManager.AccountType accountType){
         this.username = username;
@@ -140,6 +199,7 @@ class UserData{
         return (username.equals(this.username));
     }
     public CredentialsManager.AccountType getAccountType(){return this.accountType;}
+    public int getTotalNumberOfTransactions(){return this.totalNumberOfTransactions;}
 
 }
 
@@ -173,6 +233,7 @@ class CustomerUserData extends UserData{
         for(RestaurantDatabase.Genres genre : RestaurantDatabase.Genres.values()){
             if(sale.getMaxGenre().getValue() == genre.getValue()){
                 this.purchaseHistory.get(i).add(sale);
+                this.totalNumberOfTransactions++;
                 return true;
             }
             i++;
@@ -183,10 +244,11 @@ class CustomerUserData extends UserData{
     public int getUserAge(){
         return this.age;
     }
+    public int getTotalNumberOfTransactions(){ return this.totalNumberOfTransactions;}
 
     public Transaction fetchMostRecentFromSpecificGenre(RestaurantDatabase.Genres genre){
         int genreIndex = genre.getValue();
-        int genreSize = purchaseHistory.get(genreIndex).size();
+        int genreSize = this.purchaseHistory.get(genreIndex).size();
         return this.purchaseHistory.get(genreIndex).get(genreSize - 1);
     }
 
@@ -246,10 +308,27 @@ class RestaurantUserData extends UserData{
         for(RestaurantDatabase.Genres genre : RestaurantDatabase.Genres.values()){
             if(sale.getMaxGenre().getValue() == genre.getValue()){
                 this.salesHistory.get(i).add(sale);
+                this.totalNumberOfTransactions++;
+                Log.e("Restaurant purchase: ", this.username);
                 return true;
             }
             i++;
         }
         return false;
+    }
+
+    public boolean verifyGooglePlacesID(String googlePlacesID){
+        return this.restaurant.getGooglePlacesID().equals(googlePlacesID);
+    }
+
+    public String fetchUserAccountNameForGooglePlacesID(String googlePlacesID){
+        if(this.verifyGooglePlacesID(googlePlacesID)){
+            return this.username;
+        }
+        return null;
+    }
+
+    public int getTotalNumberOfTransactions(){
+        return this.totalNumberOfTransactions;
     }
 }

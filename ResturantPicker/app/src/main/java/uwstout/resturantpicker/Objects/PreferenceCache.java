@@ -1,5 +1,7 @@
 package uwstout.resturantpicker.Objects;
 
+import android.util.Log;
+
 import java.util.Vector;
 
 /*
@@ -91,12 +93,24 @@ public class PreferenceCache{
     void updateGenreTable(RestaurantDatabase.Genres genre){
         int genreValue = genre.getValue();
         if((this.preferenceCache != null) && (this.preferenceCache.get(genreValue) != null)) {
-            //remove index at element 0 since it is the oldest
-            this.preferenceCache.get(genreValue).remove(0);
+            if(this.preferenceCache.get(genreValue).size() == TABLE_DEPTH){
+                //remove index at element 0 since it is the oldest, only if the table depth reaches its limit
+                this.preferenceCache.get(genreValue).remove(0);
+            }
             this.preferenceCache.get(genreValue).add(credentialsManager.fetchMostRecentFromSpecificGenreByUser(this.username, CredentialsManager.AccountType.CUSTOMER, genre));
         }
     }
 
+    public void printCache(){
+        RestaurantDatabase.Genres[] genres = RestaurantDatabase.Genres.values();
+
+        for(int i = 0; i < genres.length-2; i++){
+            Vector<Transaction> curGenre = this.preferenceCache.get(i);
+            for(int j = 0; j < curGenre.size(); j++){
+                Log.e("Cache dump: ", Integer.toString(i) + ", " + Integer.toString(j) + ": " + /*curGenre.get(j).getMaxGenre().getValue()*/ curGenre.get(j).toString());
+            }
+        }
+    }
 
     /*
     //String name, String distance, String googlePlacesID, RestaurantDatabase.Genres genre, int cost, CredentialsManager.ServiceType serviceType

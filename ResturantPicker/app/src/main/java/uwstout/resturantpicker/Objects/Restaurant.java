@@ -1,5 +1,7 @@
 package uwstout.resturantpicker.Objects;
 
+import android.util.Log;
+
 import java.util.Vector;
 
 /**
@@ -32,6 +34,7 @@ public class Restaurant {
     //simple constructor
     //TODO: FIX
     public Restaurant(String name, String distance, double cost) {
+        this.menu = new Vector<Food>();
         this.name = name;
         this.distance = distance;
         this.cost = cost;
@@ -50,6 +53,7 @@ public class Restaurant {
     }
 
     public Restaurant(String name, String address, String googlePlacesID, long rating, String pictureID){
+        this.menu = new Vector<Food>();
         this.name = name;
         this.address = address;
         this.googlePlacesID = googlePlacesID;
@@ -115,6 +119,30 @@ public class Restaurant {
 
     public boolean existsInDB(){
         return this.restaurantUserAccount != null;
+    }
+
+    //returns the Food object correlating to the passed in name. returns null if it fails
+    public Food getFoodFromMenuByName(String foodName){
+        if(this.menu != null){
+            for(int i = 0; i < this.menu.size(); i++) {
+                if(this.menu.get(i).getDescription().equals(foodName)){
+                    return this.menu.get(i);
+                }
+            }
+        }
+        return null;
+    }
+
+    //adds a new menu item to the restaurant, checking if the item exists in the menu already
+    public void addMenuItem(Food newMenuItem){
+        if(getFoodFromMenuByName(newMenuItem.getDescription()) == null){this.menu.add(newMenuItem);}
+    }
+
+    //adds a new menu items to the restaurant, checking if the item exists in the menu already
+    public void addMenuItems(Vector<Food> newMenuItems){
+        for(int i = 0; i < newMenuItems.size(); i++){
+            if(getFoodFromMenuByName(newMenuItems.get(i).getDescription()) == null){this.menu.add(newMenuItems.get(i));}
+        }
     }
 
 }

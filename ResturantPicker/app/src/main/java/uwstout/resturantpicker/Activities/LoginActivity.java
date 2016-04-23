@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
+import android.util.Log;
+
 
 import uwstout.resturantpicker.Fragments.AccountCreateFragment;
 import uwstout.resturantpicker.Fragments.BlankFragment;
@@ -14,6 +16,7 @@ import uwstout.resturantpicker.Fragments.LoginFragment;
 
 import uwstout.resturantpicker.Objects.CredentialsManager;
 import uwstout.resturantpicker.Objects.DataManager;
+import uwstout.resturantpicker.Objects.Food;
 import uwstout.resturantpicker.Objects.Restaurant;
 import uwstout.resturantpicker.Objects.RestaurantDatabase;
 import uwstout.resturantpicker.R;
@@ -43,18 +46,28 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void loadDBWithTestRestaurants(){
+
+
+        RestaurantDatabase.Genres[] vals = RestaurantDatabase.Genres.values();
+        for(int i = 0; i < vals.length; i++){
+            Log.e("Genre value: ", Integer.toString(vals[i].getValue()));
+        }
         //TODO: implement menus with food objects to each of these restaurants, and attempt to log transactions between them and users
         //NOTE: I know these restuarant objects are not representative. I wanted to only match places ID at the time
         Restaurant logjam = new Restaurant("Log Jam", "address", "ChIJZ8EG-aF7-IcRk6UJVSnQMOY", 1, "pictureID");
         logjam.setGenre(RestaurantDatabase.Genres.FASTFOOD);
+        logjam.addMenuItem(new Food(10, 20, 30, 40, 50, "test", RestaurantDatabase.Genres.FASTFOOD, 2.30));
         this.createAccount(CredentialsManager.AccountType.RESTAURANT, "logjamUN", "password", logjam);
+
 
         Restaurant jeffs = new Restaurant("Jeff's Pizza", "address", "ChIJEerOHaJ7-IcRhvqsXhVLrrM", 1, "pictureID");
         jeffs.setGenre(RestaurantDatabase.Genres.PIZZA);
+        jeffs.addMenuItem(new Food(10, 20, 30, 40, 50, "test", RestaurantDatabase.Genres.PIZZA, 3.40));
         this.createAccount(CredentialsManager.AccountType.RESTAURANT, "jeffsUN", "password", jeffs);
 
         Restaurant rawdeal = new Restaurant("Raw Deal", "address", "ChIJpzKPC6J7-IcRjaZaIa1HGGE", 1, "pictureID");
         rawdeal.setGenre(RestaurantDatabase.Genres.FASTFOOD);
+        rawdeal.addMenuItem(new Food(10, 20, 30, 40, 50, "test", RestaurantDatabase.Genres.FASTFOOD, 4.50));
         this.createAccount(CredentialsManager.AccountType.RESTAURANT, "rawDealUN", "password", rawdeal);
     }
 
