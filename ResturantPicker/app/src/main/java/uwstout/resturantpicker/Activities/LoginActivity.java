@@ -46,8 +46,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void loadDBWithTestRestaurants(){
-
-
         RestaurantDatabase.Genres[] vals = RestaurantDatabase.Genres.values();
         for(int i = 0; i < vals.length; i++){
             Log.e("Genre value: ", Integer.toString(vals[i].getValue()));
@@ -58,7 +56,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         logjam.setGenre(RestaurantDatabase.Genres.FASTFOOD);
         logjam.addMenuItem(new Food(10, 20, 30, 40, 50, "test", RestaurantDatabase.Genres.FASTFOOD, 2.30));
         this.createAccount(CredentialsManager.AccountType.RESTAURANT, "logjamUN", "password", logjam);
-
 
         Restaurant jeffs = new Restaurant("Jeff's Pizza", "address", "ChIJEerOHaJ7-IcRhvqsXhVLrrM", 1, "pictureID");
         jeffs.setGenre(RestaurantDatabase.Genres.PIZZA);

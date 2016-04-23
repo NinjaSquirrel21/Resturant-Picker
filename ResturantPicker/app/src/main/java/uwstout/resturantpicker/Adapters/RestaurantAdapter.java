@@ -88,7 +88,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     //      add all checked ones to a list of food items to add to the transaction
 
                     Food temp = ViewHolder.this.restaurant.getFoodFromMenuByName("test");
-                    ViewHolder.this.restaurant.setGenre(RestaurantDatabase.Genres.PIZZA);
+                    //ViewHolder.this.restaurant.setGenre(RestaurantDatabase.Genres.PIZZA);
                     Log.v("Rest. toString: ", ViewHolder.this.restaurant.toString());
                     if(temp != null) {
                         itemsSold.add(temp);
@@ -100,7 +100,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     //String customer, String vendor, String vendorGoogleId, Date transactionTime, double finalPrice, Vector<Food> itemsSold
                     DataManager.getInstance().completeTransaction(new Transaction(customer, vendor, vendorGoogleId, transactionTime, finalPrice, itemsSold));
 
-                    //Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
+                    Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
                     //DataManager.getInstance().getPreferenceCache().printCache();
                     //DataManager.getInstance().getRestaurantDatabase().dumpDB();
                 }
@@ -192,9 +192,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         protected void onProgressUpdate(Integer... progress) {
         }
 
-        protected void onPostExecute(Long result) {
-
-
+        protected void onPostExecute(Long result){
             holder.restaurant = restaurants.get(currentPosition);
             holder.titleText.setText(holder.restaurant.getName());
             holder.contentText.setText(holder.restaurant.getAddress());
