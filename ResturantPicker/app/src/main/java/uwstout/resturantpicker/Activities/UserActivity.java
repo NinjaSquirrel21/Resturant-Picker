@@ -311,7 +311,6 @@ public class UserActivity extends AppCompatActivity{
                                     Log.v("Restaurant added:", mergedRestaurant.toString());
                                 }
 
-                               localRestaurants.add(temp);
                                 Log.v("Restaurant names", "" + "~" + restName + "~" + address + "~" + id);
 
                             }

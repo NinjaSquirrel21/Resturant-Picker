@@ -106,9 +106,9 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     double finalPrice = 0;
 
                     //TODO: Make this more robust, perhaps iterate through a loop of possible options from the menu list.
-                    //      for example, say that when the menu button is pressed, a Fragment pops up on top of the RestaurantCard and
-                    //      contains a scrolling list of their menu and prices, with check boxes next to them.
-                    //      when the buy button is pressed, it would simply iterate through the whole list of check boxes generated and
+                    //      for example, say that when the menu butt and prices, with check boxes next to them.
+                    //      when the buy button is pressed, it wouldon is pressed, a Fragment pops up on top of the RestaurantCard and
+                    //      contains a scrolling list of their menu simply iterate through the whole list of check boxes generated and
                     //      add all checked ones to a list of food items to add to the transaction
 
                     Food temp = ViewHolder.this.restaurant.getFoodFromMenuByName("test");
