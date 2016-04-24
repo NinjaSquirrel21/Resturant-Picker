@@ -69,7 +69,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         protected Button menuButton;
         protected Restaurant restaurant;
 
-        protected Food currentRestuarntsFood;
+        protected Vector<Food> currentRestuarntsFood;
 
 
         //added a click listener to act when "buy" is pressed, creating a new Transaction and running it through the data model. WIP
@@ -87,8 +87,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final MenuFragment menuFragment= new MenuFragment((String) titleText.getText());
-
+                    currentRestuarntsFood = ViewHolder.this.restaurant.getMenu();
+                    final MenuFragment menuFragment= new MenuFragment((String) titleText.getText(), currentRestuarntsFood);
                     menuFragment.show(fragman, "Sample Fragment");
                 }
             });
@@ -231,17 +231,20 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     public static class MenuFragment extends DialogFragment {
         String title;
-         public MenuFragment(String restName){
+        Vector<Food> curFood;
+         public MenuFragment(String restName, Vector<Food> currentFood){
             title = restName;
+            curFood = currentFood;
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
             getDialog().setTitle(title);
-            List<String> list1 = new ArrayList<String>();
-            list1.add("Burger");
-            list1.add("Fries");
+            List<String> list1 = new ArrayList<>();
+            for(int i = 0; i < curFood.size();i++){
+                list1.add(curFood.get(i).getDescription());
+            }
 
             ListView lv = (ListView) rootView.findViewById(R.id.listView);
 
