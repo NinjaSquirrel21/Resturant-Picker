@@ -37,6 +37,7 @@ import uwstout.resturantpicker.Objects.CredentialsManager;
 import uwstout.resturantpicker.Objects.DataManager;
 import uwstout.resturantpicker.Objects.Food;
 import uwstout.resturantpicker.Objects.Restaurant;
+import uwstout.resturantpicker.Objects.RestaurantDatabase;
 import uwstout.resturantpicker.Objects.Transaction;
 import uwstout.resturantpicker.R;
 
@@ -111,20 +112,21 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     //      add all checked ones to a list of food items to add to the transaction
 
                     Food temp = ViewHolder.this.restaurant.getFoodFromMenuByName("test");
-                    Log.v("Rest. name: ", ViewHolder.this.restaurant.getName() + vendorGoogleId);
+                    //ViewHolder.this.restaurant.setGenre(RestaurantDatabase.Genres.PIZZA);
+                    Log.v("Rest. toString: ", ViewHolder.this.restaurant.toString());
                     if(temp != null) {
-                        Log.v("Test:", "tessstttt");
                         itemsSold.add(temp);
                         finalPrice += temp.getValue();
                     }
 
-                    finalPrice *= 0.055; //tax rate
+                    finalPrice *= 1.055; //tax rate
 
                     //String customer, String vendor, String vendorGoogleId, Date transactionTime, double finalPrice, Vector<Food> itemsSold
                     DataManager.getInstance().completeTransaction(new Transaction(customer, vendor, vendorGoogleId, transactionTime, finalPrice, itemsSold));
 
-                    //Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
-                    DataManager.getInstance().getPreferenceCache().printCache();
+                    Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
+                    //DataManager.getInstance().getPreferenceCache().printCache();
+                    //DataManager.getInstance().getRestaurantDatabase().dumpDB();
                 }
             });
         }
@@ -218,9 +220,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         protected void onProgressUpdate(Integer... progress) {
         }
 
-        protected void onPostExecute(Long result) {
-
-
+        protected void onPostExecute(Long result){
             holder.restaurant = restaurants.get(currentPosition);
             holder.titleText.setText(holder.restaurant.getName());
             holder.contentText.setText(holder.restaurant.getAddress());

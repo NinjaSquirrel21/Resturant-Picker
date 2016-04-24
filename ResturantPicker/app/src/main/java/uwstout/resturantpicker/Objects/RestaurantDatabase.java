@@ -119,16 +119,31 @@ public class RestaurantDatabase{
         return null;
     }
 
-    public void toStringIDs(){
+
+    //prints all Restaurants in the DB to the error log
+    public void dumpDB(){
         if(this.restaurants != null) {
             for (int i = 0; i < Genres.NUMBEROFGENRES.getValue(); i++) {
                 if(this.restaurants.get(i) != null) {
                     for (int j = 0; j < this.restaurants.get(i).size(); j++) {
-                        Log.e("Place ID: ", this.restaurants.get(i).get(j).getGooglePlacesID());
+                        Log.e("(" + i + ", " + + j +")", this.restaurants.get(i).get(j).toString());
                     }
                 }
             }
         }
+    }
+
+    //merges two restaurants with the same GID, retrusn merged Restaurant (current instance). will prefer attributes in the new one if they overlap.
+    public Restaurant merge(Restaurant restaurant){
+        String gid = restaurant.getGooglePlacesID();
+        if(gid != null) {
+            Restaurant result = fetchCopyOfRestaurantByID(gid);
+            if(result != null){
+                result.merge(restaurant);
+                return result;
+            }
+        }
+        return null;
     }
 
     /*

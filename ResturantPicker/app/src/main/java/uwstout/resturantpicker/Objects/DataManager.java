@@ -49,7 +49,7 @@ public class DataManager{
             if(this.credentialsManager.addNewUser(accountType, username, password, args)){
                 Log.e("Rest. Account Created: ", username);
 
-                restaurantDatabase.toStringIDs();
+                restaurantDatabase.dumpDB();
                 //if restaurant account and adding new user successful
                 this.restaurantDatabase.addRestaurant((Restaurant) args);
             }

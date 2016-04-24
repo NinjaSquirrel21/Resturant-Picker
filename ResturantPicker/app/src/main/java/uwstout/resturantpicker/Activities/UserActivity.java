@@ -264,6 +264,10 @@ public class UserActivity extends AppCompatActivity{
                     String id = "";
                     String pictureString = "";
 
+                    //perhaps we should fork each iteration in parallel?
+                    //each iteration could have n^2 worst case runtime, assumed for filtering.
+                    //being able to do this in parallel really helps, since the larger the data set, the higher the chance it will get closer to n^2 complexity
+                    //since eadch entry is unique
                     for(int j=0;j<len;j++)
                     {
                         rating = 0;
@@ -295,13 +299,20 @@ public class UserActivity extends AppCompatActivity{
                             //TODO: make a schnazzy filter!
                             //sample filter, adds restaurants to the screen only if they exist in DB (fetch by place ID)
                             //NOTE: The db is being populated with 3 hard-coded entries, which only have the place ID. Update the method in LoginActivity if you need to add more information to it
-                            if ((database != null) && (database.getRestaurantDatabase().fetchCopyOfRestaurantByID(id) != null)){
+                            if(database != null){
 
                                 Restaurant temp = new Restaurant(restName, address, id, rating, pictureString);
+                                Restaurant mergedRestaurant = database.getRestaurantDatabase().merge(temp);
+                                //will only add to list if merge is successful. merge will only be successful if the restaurant already exists in the service.
+                                //NOTE: It is NOT the filter's responsibility to add these restaurants to the databases.
+                                // If the Places ID is found within the merge search, it will mutate the existing entry with the values of the Restaurant passed into the merge, allowing the filter to update existing entries only.
+                                if(mergedRestaurant != null){
+                                    localRestaurants.add(mergedRestaurant);
+                                    Log.v("Restaurant added:", mergedRestaurant.toString());
+                                }
 
-                                localRestaurants.add(temp);
+                               localRestaurants.add(temp);
                                 Log.v("Restaurant names", "" + "~" + restName + "~" + address + "~" + id);
-
 
                             }
 

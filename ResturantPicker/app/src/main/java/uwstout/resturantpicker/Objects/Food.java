@@ -25,10 +25,25 @@ public class Food {
         this.value = value;
     }
 
-    public String getDescription(){
-        return this.description;
+    public Food(int[] flavorSpectrum, String description, RestaurantDatabase.Genres genre, double value){
+        if(flavorSpectrum.length != NUMBER_OF_SPECTRUM_VALUES){return;}
+        this.setFlavorSpectrum(flavorSpectrum);
+        this.description = description;
+        this.genre = genre;
+        this.value = value;
+    }
+
+    public boolean setFlavorSpectrum(int[] flavorSpectrum){
+        if(flavorSpectrum.length != NUMBER_OF_SPECTRUM_VALUES){return false;}
+        this.sweetLevel = flavorSpectrum[0];
+        this.sourLevel = flavorSpectrum[1];
+        this.bitterLevel = flavorSpectrum[2];
+        this.saltyLevel = flavorSpectrum[3];
+        this.umamiLevel = flavorSpectrum[4];
+        return true;
     }
     public int[] getFlavorSpectrum(){return new int[]{sweetLevel, sourLevel, bitterLevel, saltyLevel, umamiLevel};}
+    public String getDescription(){return this.description;}
     public RestaurantDatabase.Genres getGenre(){return this.genre;}
     public double getValue(){ return this.value;}
 

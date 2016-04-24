@@ -20,9 +20,9 @@ public class Restaurant {
     private Food menuCharacteristics;
     private double cost;
     private CredentialsManager.ServiceType serviceType;
-    private int congestionLevel;
+    private int congestionLevel = -1;
     private String address;
-    private long rating;
+    private long rating = -1;
     private String pictureID;
 
     public Restaurant(){
@@ -61,7 +61,7 @@ public class Restaurant {
         this.pictureID = pictureID;
     }
 
-    //returns the average values for all food items in the food spectrum
+    //calculates the average values for all food items in the food spectrum
     private void calculateMenuCharacteristics(){
 
         int[] avgMenuFlavorSpectrum = new int[Food.NUMBER_OF_SPECTRUM_VALUES];
@@ -77,44 +77,8 @@ public class Restaurant {
             avgMenuFlavorSpectrum[k] /= Food.NUMBER_OF_SPECTRUM_VALUES;
         }
 
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public long getRating() {
-        return this.rating;
-    }
-
-    public String getdistance(){
-        return this.distance;
-    }
-
-    public double getcost(){
-        return this.cost;
-    }
-
-    public String getPictureID(){
-        return this.pictureID;
-    }
-
-    public RestaurantDatabase.Genres getGenre(){
-        return this.genre;
-    }
-
-    public void setGenre(RestaurantDatabase.Genres genre){this.genre = genre;}
-
-    public void updateCongestionLevel(int congestionLevel){
-        this.congestionLevel = congestionLevel;
-    }
-
-    public String getGooglePlacesID(){
-        return this.googlePlacesID;
+        //calculate the menuCharacteristics every time the menu is updated
+        this.menuCharacteristics = new Food(avgMenuFlavorSpectrum, this.name + "Characteristics", this.genre, -1.0);
     }
 
     public boolean existsInDB(){
@@ -138,11 +102,75 @@ public class Restaurant {
         if(getFoodFromMenuByName(newMenuItem.getDescription()) == null){this.menu.add(newMenuItem);}
     }
 
-    //adds a new menu items to the restaurant, checking if the item exists in the menu already
-    public void addMenuItems(Vector<Food> newMenuItems){
-        for(int i = 0; i < newMenuItems.size(); i++){
-            if(getFoodFromMenuByName(newMenuItems.get(i).getDescription()) == null){this.menu.add(newMenuItems.get(i));}
+    //adds a new menu items to the restaurant, only if the item does not exist in the menu already
+    public boolean addMenuItems(Vector<Food> newMenuItems){
+        if(newMenuItems != null) {
+            for (int i = 0; i < newMenuItems.size(); i++) {
+                if (getFoodFromMenuByName(newMenuItems.get(i).getDescription()) == null) {
+                    this.menu.add(newMenuItems.get(i));
+                }else{
+                    //failure if any menu item fails to be added
+                    Log.e("Restaurant Error: ", "Failed to add Food item with addMenuItems(), attempting to add duplicate entry\n" + newMenuItems.get(i).toString());
+                    return false;
+                }
+            }
+            //success if all menu items are added successfully
+            return true;
         }
+        //failure if given garbage
+        return false;
+    }
+
+    //merges two restaurants with the same GID, putting the result into this instance. will prefer attributes in the new one if they overlap.
+    public Restaurant merge(Restaurant restaurant){
+        //NOTE:: Not all attributes of Restaurant are mutated in this function. Check carefully to see if your variable is being changed or not with this call
+
+        //never mutate gid. this should never be called unless theres a gid match to begin with
+        if(!restaurant.getGooglePlacesID().equals(this.googlePlacesID)){return null;}
+
+        //if the passed in restaurant has initialized values, write this instance's variables to them
+        if(restaurant.getName() != null) this.name = restaurant.getName();
+        if(restaurant.getDistance() != null) this.distance = restaurant.getDistance();
+        if(restaurant.getGenre() != null) this.genre = restaurant.getGenre();
+        if(restaurant.getCost() != 0) this.cost = restaurant.getCost();
+        if(restaurant.getServiceType() != null) this.serviceType = restaurant.getServiceType();
+        if(restaurant.getCongestionLevel() != -1) this.congestionLevel = restaurant.getCongestionLevel();
+        if(restaurant.getAddress() != null) this.address = restaurant.getAddress();
+        if(restaurant.getRating() != -1) this.rating = restaurant.getRating();
+        if(restaurant.getPictureID() != null) this.pictureID = restaurant.getPictureID();
+        if(restaurant.getMenu() != null) this.addMenuItems(restaurant.getMenu());
+        //private Food menuCharacteristics;
+        return this;
+    }
+
+    public String getName(){return this.name;}
+    public String getAddress(){return this.address;}
+    public long getRating(){return this.rating;}
+    public String getDistance(){return this.distance;}
+    public double getCost(){return this.cost;}
+    public String getPictureID(){return this.pictureID;}
+    public Vector<Food> getMenu(){return this.menu;}
+    public CredentialsManager.ServiceType getServiceType(){return this.serviceType;}
+    public RestaurantDatabase.Genres getGenre(){return this.genre;}
+    public void setGenre(RestaurantDatabase.Genres genre){this.genre = genre;}
+    public int getCongestionLevel(){return this.congestionLevel;}
+    public void updateCongestionLevel(int congestionLevel){this.congestionLevel = congestionLevel;}
+    public String getGooglePlacesID(){return this.googlePlacesID;}
+
+    public String toString(){
+        String result = "";
+        result += googlePlacesID + "\n";
+        result += name + "\n";
+        result += genre + "\n";
+        result += menu.toString() + "\n";
+        //private Food menuCharacteristics + "\n";
+        result += cost + "\n";
+        result += serviceType + "\n";
+        result += congestionLevel + "\n";
+        result += address + "\n";
+        result += rating + "\n";
+        result += pictureID + "\n";
+        return result;
     }
 
 }
