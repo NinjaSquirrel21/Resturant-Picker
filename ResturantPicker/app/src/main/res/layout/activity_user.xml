@@ -12,6 +12,12 @@
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         />
 
+    <RelativeLayout
+        android:id="@+id/loading_screen_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        />
     <GridLayout
         android:id="@+id/card_fragment_container"
         android:layout_width="match_parent"

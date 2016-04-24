@@ -1,8 +1,12 @@
 package uwstout.resturantpicker.Adapters;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -22,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.Date;
@@ -45,6 +52,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     private static URL url;
     private Drawable d;
     public Context cntx;
+    public static FragmentManager fragman;
 
 
 
@@ -57,7 +65,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         protected TextView contentText;
         protected ImageView foodPic;
         protected Button buyButton;
+        protected Button menuButton;
         protected Restaurant restaurant;
+
+        protected Food currentRestuarntsFood;
 
 
         //added a click listener to act when "buy" is pressed, creating a new Transaction and running it through the data model. WIP
@@ -67,12 +78,25 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             contentText = (TextView) itemView.findViewById(R.id.data);
             foodPic = (ImageView) itemView.findViewById(R.id.foodImage);
             buyButton = (Button) itemView.findViewById(R.id.buy_button);
+            menuButton = (Button) itemView.findViewById(R.id.view_menu_button);
+
+
+
+
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final MenuFragment menuFragment= new MenuFragment((String) titleText.getText());
+
+                    menuFragment.show(fragman, "Sample Fragment");
+                }
+            });
+
             buyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     //load up a Transaction object
-
                     String customer = DataManager.getInstance().getCurrentUser();
                     String vendorGoogleId = ViewHolder.this.restaurant.getGooglePlacesID();
                     String vendor = DataManager.getInstance().getCredentialsManager().getUsernameBasedOnGooglePlaceID(vendorGoogleId);
@@ -107,9 +131,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RestaurantAdapter(List<Restaurant> myRestaurants, Context context) {
+    public RestaurantAdapter(List<Restaurant> myRestaurants, Context context, FragmentManager fm) {
         restaurants = myRestaurants;
         cntx = context;
+        fragman = fm;
     }
 
     // Create new views (invoked by the layout manager)
@@ -182,7 +207,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
                 d = Drawable.createFromStream(content, "src");
             }
-            else{d = cntx.getResources().getDrawable(R.drawable.burger, cntx.getTheme());}
+            else{
+                    d = cntx.getResources().getDrawable(R.drawable.burger, cntx.getTheme());
+
+            }
 
             return null;
         }
@@ -197,6 +225,33 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             holder.titleText.setText(holder.restaurant.getName());
             holder.contentText.setText(holder.restaurant.getAddress());
             holder.foodPic.setImageDrawable(d);
+        }
+    }
+
+
+    public static class MenuFragment extends DialogFragment {
+        String title;
+         public MenuFragment(String restName){
+            title = restName;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
+            getDialog().setTitle(title);
+            List<String> list1 = new ArrayList<String>();
+            list1.add("Burger");
+            list1.add("Fries");
+
+            ListView lv = (ListView) rootView.findViewById(R.id.listView);
+
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                    getActivity(),
+                    android.R.layout.simple_list_item_1,
+                    list1 );
+
+            lv.setAdapter(arrayAdapter);
+            return rootView;
         }
     }
 

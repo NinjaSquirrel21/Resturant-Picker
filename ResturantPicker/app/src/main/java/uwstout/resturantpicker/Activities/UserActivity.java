@@ -1,5 +1,8 @@
 package uwstout.resturantpicker.Activities;
 
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -15,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Status;
@@ -34,7 +36,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -65,13 +66,14 @@ public class UserActivity extends AppCompatActivity{
     public static String mLongitudeText;
 
     public static List<Restaurant> localRestaurants;
-    JSONArray photoArray = null;
 
     static RestaurantAdapter adapter;
-    private static List<Restaurant> demoData;
     static RecyclerView recyclerView;
     public Context context;
+    public static FragmentManager fragman;
     private static DataManager database;
+
+    public static LoadingScreenFragment lf;
 
 
     @Override
@@ -84,6 +86,8 @@ public class UserActivity extends AppCompatActivity{
 
         context = getApplicationContext();
 
+        fragman = getFragmentManager();
+
         //Instantiates Vector used to keep track of local restaurants
         localRestaurants = new Vector<Restaurant>();
 
@@ -92,8 +96,13 @@ public class UserActivity extends AppCompatActivity{
         fragment which holds the restaurant cards
          */
         PlaceholderFragment placeholder = new PlaceholderFragment(context);
-        getFragmentManager().beginTransaction()
+        fragman.beginTransaction()
                 .add(R.id.card_fragment_container, placeholder)
+                .commit();
+
+        lf = new LoadingScreenFragment();
+        fragman.beginTransaction()
+                .add(R.id.loading_screen_fragment, lf)
                 .commit();
 
         /*
@@ -112,8 +121,27 @@ public class UserActivity extends AppCompatActivity{
         mGoogleApiClient.connect();
     }
 
+
+    public static class LoadingScreenFragment extends Fragment{
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_loading, container, false);
+        }
+
+        @Override
+        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+        }
+    }
+
     /*
-    Placeholder fragment class
+     Placeholder fragment class
 
      This will set the proper xml layout as well as
      populate the cards with their respective data
@@ -147,10 +175,10 @@ public class UserActivity extends AppCompatActivity{
             recyclerView.setLayoutManager(llm);
 
             /*
-            Instnatiates the google search box and implements it's listener
+            Instantiates the google search box and implements it's listener
              */
             PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+                    fragman.findFragmentById(R.id.place_autocomplete_fragment);
 
 
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -184,8 +212,9 @@ public class UserActivity extends AppCompatActivity{
 
         }
         public static void createCards(){
-            adapter = new RestaurantAdapter(localRestaurants, context);
+            adapter = new RestaurantAdapter(localRestaurants, context, fragman);
             recyclerView.setAdapter(adapter);
+            fragman.beginTransaction().remove(lf).commit();
         }
 
         /*
@@ -267,10 +296,13 @@ public class UserActivity extends AppCompatActivity{
                             //sample filter, adds restaurants to the screen only if they exist in DB (fetch by place ID)
                             //NOTE: The db is being populated with 3 hard-coded entries, which only have the place ID. Update the method in LoginActivity if you need to add more information to it
                             if ((database != null) && (database.getRestaurantDatabase().fetchCopyOfRestaurantByID(id) != null)){
+
                                 Restaurant temp = new Restaurant(restName, address, id, rating, pictureString);
 
                                 localRestaurants.add(temp);
                                 Log.v("Restaurant names", "" + "~" + restName + "~" + address + "~" + id);
+
+
                             }
 
                         } catch (JSONException e) {
@@ -366,4 +398,14 @@ public class UserActivity extends AppCompatActivity{
         return sb.toString();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        localRestaurants.clear();
+        super.onPause();
+    }
 }
