@@ -48,6 +48,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 
 
 public class UserActivity extends AppCompatActivity{
@@ -197,7 +198,7 @@ public class UserActivity extends AppCompatActivity{
 
         public static void fetchRestaurants(){
             try {
-                url = new URL(getCurrentURL(1500));
+                url = new URL(getCurrentURL(2000));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -300,7 +301,6 @@ public class UserActivity extends AppCompatActivity{
                             //sample filter, adds restaurants to the screen only if they exist in DB (fetch by place ID)
                             //NOTE: The db is being populated with 3 hard-coded entries, which only have the place ID. Update the method in LoginActivity if you need to add more information to it
                             if(database != null){
-
                                 Restaurant temp = new Restaurant(restName, address, id, rating, pictureString);
                                 Restaurant mergedRestaurant = database.getRestaurantDatabase().merge(temp);
                                 //will only add to list if merge is successful. merge will only be successful if the restaurant already exists in the service.
@@ -310,15 +310,20 @@ public class UserActivity extends AppCompatActivity{
                                     localRestaurants.add(mergedRestaurant);
                                     Log.v("Restaurant added:", mergedRestaurant.toString());
                                 }
-
                                 Log.v("Restaurant names", "" + "~" + restName + "~" + address + "~" + id);
-
                             }
-
-                        } catch (JSONException e) {
+                        }catch(JSONException e){
                             e.printStackTrace();
                         }
                     }
+                    Object[] tempRestsObj = localRestaurants.toArray();
+                    Restaurant[] tempRests = new Restaurant[tempRestsObj.length];
+                    Log.v("tempRests: ", Arrays.toString(tempRests));
+                    int index = 0;
+                    for(Object restaurant : tempRestsObj){
+                        tempRests[index++] = (Restaurant)restaurant;
+                    }
+                    localRestaurants = Arrays.asList(DataManager.getInstance().getRestaurantDatabase().restaurantSortByPreference(tempRests));
                 }
                 return null;
             }

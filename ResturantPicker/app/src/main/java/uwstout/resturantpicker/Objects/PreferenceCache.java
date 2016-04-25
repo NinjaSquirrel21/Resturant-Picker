@@ -2,6 +2,7 @@ package uwstout.resturantpicker.Objects;
 
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 /*
@@ -110,6 +111,35 @@ public class PreferenceCache{
                 Log.e("Cache dump: ", Integer.toString(i) + ", " + Integer.toString(j) + ": " + /*curGenre.get(j).getMaxGenre().getValue()*/ curGenre.get(j).toString());
             }
         }
+    }
+
+    public Food getAvgFoodSpectrumValueOfGivenGenreTable(RestaurantDatabase.Genres genre){
+        int genreIndex = genre.getValue();
+
+        if(this.preferenceCache != null){
+            Vector<Transaction> genreTable = this.preferenceCache.get(genreIndex);
+
+            if(genreTable != null){
+                int[] genreTotalFoodSpectrum = new int[Food.NUMBER_OF_SPECTRUM_VALUES];
+                Arrays.fill(genreTotalFoodSpectrum, 0);
+
+                for(int i = 0; i < genreTable.size(); i++){
+                    int[] transactionFoodSpectrum = genreTable.get(i).getAverageFoodSpectrumValues();
+                    for(int j = 0; j < Food.NUMBER_OF_SPECTRUM_VALUES; j++){
+                        genreTotalFoodSpectrum[j] += transactionFoodSpectrum[j];
+                    }
+                }
+
+                for(int k = 0; k < Food.NUMBER_OF_SPECTRUM_VALUES; k++){
+                    if(genreTable.size() > 0) genreTotalFoodSpectrum[k] /= genreTable.size();
+                }
+
+                //public Food(int[] flavorSpectrum, String description, RestaurantDatabase.Genres genre, double value){
+                return new Food(genreTotalFoodSpectrum, "genreAvg", genre, -1);
+            }
+        }
+        int[] garbageValuesSpectrum = new int[RestaurantDatabase.Genres.NUMBEROFGENRES.getValue()];
+        return new Food(garbageValuesSpectrum, "genreAvgGarbage", genre, -1);
     }
 
     /*

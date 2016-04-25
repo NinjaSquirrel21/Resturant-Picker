@@ -72,16 +72,12 @@ public class DataManager{
     public CredentialsManager getCredentialsManager(){
         return this.credentialsManager;
     }
-
     public PreferenceCache getPreferenceCache(){
         return this.preferenceCache;
     }
-
     public RestaurantDatabase getRestaurantDatabase(){
         return this.restaurantDatabase;
     }
-
     public String getCurrentUser(){ return this.currentUser;}
-
     public CredentialsManager.AccountType getCurrentUserType(){ return currentUserType; }
 }

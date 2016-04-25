@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         setContentView(R.layout.activity_login);
 
         database = DataManager.getInstance();
-        loadDBWithTestRestaurants();
+        loadDBWithTestRestaurants2();
 
         if (findViewById(R.id.fragment_container) != null) {
             if (savedInstanceState != null) return;
@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         }
         //TODO: implement menus with food objects to each of these restaurants, and attempt to log transactions between them and users
         //NOTE: I know these restuarant objects are not representative. I wanted to only match places ID at the time
+
         Restaurant logjam = new Restaurant("Log Jam", "address", "ChIJZ8EG-aF7-IcRk6UJVSnQMOY", 1, "pictureID");
         logjam.setGenre(RestaurantDatabase.Genres.FASTFOOD);
         logjam.addMenuItem(new Food(10, 20, 30, 40, 50, "Burger", RestaurantDatabase.Genres.FASTFOOD, 2.30));
@@ -90,6 +91,43 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         Restaurant g4 = new Restaurant("Log Jam", "address", "g4", 1, "pictureID");
         g4.setGenre(RestaurantDatabase.Genres.CHINESE);
         this.createAccount(CredentialsManager.AccountType.RESTAURANT, "g1UN", "password", g4);
+    }
+
+    private void loadDBWithTestRestaurants2(){
+        Restaurant jeffs = new Restaurant("Jeff's Pizza", "address", "ChIJEerOHaJ7-IcRhvqsXhVLrrM", 1, "pictureID");
+        jeffs.setGenre(RestaurantDatabase.Genres.PIZZA);
+        jeffs.addMenuItem(new Food(10, 20, 30, 40, 50, "Small Sausage", RestaurantDatabase.Genres.PIZZA, 3.40));
+        jeffs.addMenuItem(new Food(10, 20, 30, 40, 50, "Medium Sausage", RestaurantDatabase.Genres.PIZZA, 3.40));
+        jeffs.addMenuItem(new Food(10, 20, 30, 40, 50, "Large Sausage", RestaurantDatabase.Genres.PIZZA, 3.40));
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "jeffsUN", "password", jeffs);
+
+        Restaurant teds = new Restaurant("Ted's Pizza", "address", "ChIJB83FKpl7-IcR2-rdR8sXpoA", 1, "pictureID");
+        teds.setGenre(RestaurantDatabase.Genres.PIZZA);
+        teds.addMenuItem(new Food(10, 20, 30, 40, 50, "Small Sausage", RestaurantDatabase.Genres.PIZZA, 3.40));
+        teds.addMenuItem(new Food(10, 20, 30, 40, 50, "Medium Sausage", RestaurantDatabase.Genres.PIZZA, 3.40));
+        teds.addMenuItem(new Food(10, 20, 30, 40, 50, "Large Sausage", RestaurantDatabase.Genres.PIZZA, 3.40));
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "tedsUN", "password", teds);
+
+        Restaurant culvers = new Restaurant("Culver's", "address", "ChIJuXfu9IZ7-IcRCwPsEykvwh0", 1, "pictureID");
+        culvers.setGenre(RestaurantDatabase.Genres.FASTFOOD);
+        culvers.addMenuItem(new Food(10, 20, 30, 40, 50, "Burger", RestaurantDatabase.Genres.FASTFOOD, 2.30));
+        culvers.addMenuItem(new Food(10, 20, 30, 40, 50, "Wrap", RestaurantDatabase.Genres.FASTFOOD, 2.30));
+        culvers.addMenuItem(new Food(10, 20, 30, 40, 50, "Wings", RestaurantDatabase.Genres.FASTFOOD, 2.30));
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "culversUN", "password", culvers);
+
+        Restaurant logjam = new Restaurant("Log Jam", "address", "ChIJZ8EG-aF7-IcRk6UJVSnQMOY", 1, "pictureID");
+        logjam.setGenre(RestaurantDatabase.Genres.FASTFOOD);
+        logjam.addMenuItem(new Food(10, 20, 30, 40, 50, "Burger", RestaurantDatabase.Genres.FASTFOOD, 2.30));
+        logjam.addMenuItem(new Food(10, 20, 30, 40, 50, "Wrap", RestaurantDatabase.Genres.FASTFOOD, 2.30));
+        logjam.addMenuItem(new Food(10, 20, 30, 40, 50, "Wings", RestaurantDatabase.Genres.FASTFOOD, 2.30));
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "logjamUN", "password", logjam);
+
+        Restaurant cancun = new Restaurant("Fortune Cookie", "address", "ChIJR_CLM3h8-IcR1_9XD8oA2ac", 1, "pictureID");
+        cancun.setGenre(RestaurantDatabase.Genres.MEXICAN);
+        cancun.addMenuItem(new Food(10, 20, 30, 40, 50, "Burger", RestaurantDatabase.Genres.MEXICAN, 2.30));
+        cancun.addMenuItem(new Food(10, 20, 30, 40, 50, "Wrap", RestaurantDatabase.Genres.MEXICAN, 2.30));
+        cancun.addMenuItem(new Food(10, 20, 30, 40, 50, "Wings", RestaurantDatabase.Genres.MEXICAN, 2.30));
+        this.createAccount(CredentialsManager.AccountType.RESTAURANT, "cancunUN", "password", cancun);
     }
 
     //implemented through the LoginFragmentInterface

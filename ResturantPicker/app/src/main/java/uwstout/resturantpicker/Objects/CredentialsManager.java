@@ -175,6 +175,24 @@ public class CredentialsManager {
         }
         return -1;
     }
+
+    //returns the number of transactions completed of a given genre
+    public int getTotalNumberOfTransactionsByGenre(String username, RestaurantDatabase.Genres genre){
+        UserData user = this.fetchUserDataByName(username);
+        if(user instanceof CustomerUserData) {
+            return ((CustomerUserData) user).getTotalNumberOfTransactionsByGenre(genre);
+        } else return -1;
+    }
+
+    //returns the number of transactions completed of all genres
+    public int[] getTotalNumberOfTransactionsForAllGenres(String username){
+        UserData user = this.fetchUserDataByName(username);
+        if(user instanceof CustomerUserData) {
+            return ((CustomerUserData)this.fetchUserDataByName(username)).getTotalNumberOfTransactionsForAllGenres();
+        } else{
+            return new int[RestaurantDatabase.Genres.NUMBEROFGENRES.getValue()];
+        }
+    }
 }
 
 //parent class used to hold user data
@@ -206,6 +224,7 @@ class UserData{
 //child class of UserData that holds sensitive user data for customer accounts
 class CustomerUserData extends UserData{
     private Vector<Vector<Transaction>> purchaseHistory;
+    private int[] totalPurchasedFromGenre = new int[Food.NUMBER_OF_SPECTRUM_VALUES];
     private int age;
 
     public CustomerUserData(String username, String password, int age){
@@ -233,7 +252,8 @@ class CustomerUserData extends UserData{
         for(RestaurantDatabase.Genres genre : RestaurantDatabase.Genres.values()){
             if(sale.getMaxGenre().getValue() == genre.getValue()){
                 this.purchaseHistory.get(i).add(sale);
-                this.totalNumberOfTransactions++;
+                this.totalNumberOfTransactions++;                                   //increment total num of transactions
+                this.totalPurchasedFromGenre[sale.getMaxGenre().getValue()]++;      //increment total num of transactions per genre
                 return true;
             }
             i++;
@@ -245,6 +265,20 @@ class CustomerUserData extends UserData{
         return this.age;
     }
     public int getTotalNumberOfTransactions(){ return this.totalNumberOfTransactions;}
+
+    //returns the number of transactions completed of a given genre
+    public int getTotalNumberOfTransactionsByGenre(RestaurantDatabase.Genres genre){
+        if(genre.getValue() < RestaurantDatabase.Genres.NUMBEROFGENRES.getValue()){
+            //if the passed genre exists,
+            return this.totalPurchasedFromGenre[genre.getValue()];
+        }
+        else return -1;
+    }
+
+    //returns the number of transactions completed of all genres
+    public int[] getTotalNumberOfTransactionsForAllGenres(){
+        return this.totalPurchasedFromGenre;
+    }
 
     public Transaction fetchMostRecentFromSpecificGenre(RestaurantDatabase.Genres genre){
         int genreIndex = genre.getValue();

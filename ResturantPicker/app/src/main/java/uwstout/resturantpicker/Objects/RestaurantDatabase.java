@@ -1,5 +1,6 @@
 package uwstout.resturantpicker.Objects;
 
+import java.util.Arrays;
 import java.util.Vector;
 import android.util.Log;
 
@@ -144,6 +145,118 @@ public class RestaurantDatabase{
             }
         }
         return null;
+    }
+
+    public Restaurant[] restaurantSortByPreference(Restaurant[] toBeSorted){
+        Log.e("TOBESORTED: ", Arrays.toString(toBeSorted));
+        Vector<Vector<Restaurant>> tempSort = new Vector<Vector<Restaurant>>();
+
+        //create 1st dimension, representing genre
+        for(RestaurantDatabase.Genres genre : RestaurantDatabase.Genres.values()) {
+            tempSort.add(new Vector<Restaurant>());
+        }
+
+        //add the passed in restaurants into the temporary data structure
+        for(Restaurant rest : toBeSorted){
+            tempSort.get(rest.getGenre().getValue()).add(rest);
+        }
+
+        //-------------------
+        //sort by food spectrum in cache
+        //-------------------
+        //for each genre...
+        for(RestaurantDatabase.Genres genre : RestaurantDatabase.Genres.values()){
+            //if entries exist for a given genre...
+            if(tempSort.get(genre.getValue()).size() > 0){
+
+                //get avg flavor spectrum for this genre from the user's cache
+                int[] preferenceCacheFlavorSpectrumByGenre = ((Food)DataManager.getInstance().getPreferenceCache().getAvgFoodSpectrumValueOfGivenGenreTable(genre)).getFlavorSpectrum();
+
+                int numberOfRestaurantsToSortInThisGenre = tempSort.get(genre.getValue()).size();
+                int[] deltaFromAveragePerRestaurant = new int[numberOfRestaurantsToSortInThisGenre];
+
+                for(int i = 0; i < deltaFromAveragePerRestaurant.length; i++){
+                    int totalDelta = 0;
+
+                    //get avg flavor spectrum for the given restaurant we want to sort
+                    int[] restaurantAvgFoodSpectrum = tempSort.get(genre.getValue()).get(i).getMenuCharacteristics().getFlavorSpectrum();
+                    for(int j = 0; j < RestaurantDatabase.Genres.NUMBEROFGENRES.getValue() - 1; j++){
+                        //calculate the diff between user preference and restaurant categorization per flavor spectrum value
+                        //and add it to the deltas of all spectrum values
+                        totalDelta += Math.abs(preferenceCacheFlavorSpectrumByGenre[j] - restaurantAvgFoodSpectrum[j]);
+                    }
+                    //
+                    deltaFromAveragePerRestaurant[i] = totalDelta;
+                }
+
+                //sort them from lowest delta to highest
+                int[] finalOrderForGenre = new int[numberOfRestaurantsToSortInThisGenre];
+                Arrays.fill(finalOrderForGenre, -1);
+                int prevMin = Integer.MIN_VALUE;
+                int currMin = Integer.MAX_VALUE;
+                int currIndex = -1;
+
+                //generate a list of sorted indexes
+                for(int h = 0; h < finalOrderForGenre.length; h++){
+                    for(int g = 0; g < deltaFromAveragePerRestaurant.length; g++){
+                        if((deltaFromAveragePerRestaurant[g] <= currMin) && (deltaFromAveragePerRestaurant[g] >= prevMin)){
+                            boolean duplicateFound = false;
+
+                            for(int m = 0; m < finalOrderForGenre.length; m++) {
+                                if(finalOrderForGenre[h] == g) duplicateFound = true;
+                            }
+
+                            if(!duplicateFound) finalOrderForGenre[h] = g;
+                        }
+                    }
+                }
+
+                //use the sorted indexes to sort the original array of Restaurants
+                Vector<Restaurant> newGenreOrder = new Vector<Restaurant>();
+                for(int d = 0; d < finalOrderForGenre.length; d++){
+                    //copy the Restaurants in a local vector to reorder them
+                    newGenreOrder.add(tempSort.get(genre.getValue()).get(finalOrderForGenre[d]));
+                }
+                //remove original order
+                tempSort.get(genre.getValue()).removeAllElements();
+
+                //and replace it with the new order
+                for(int y = 0; y < newGenreOrder.size(); y++){
+                    tempSort.get(genre.getValue()).add(newGenreOrder.get(y));
+                }
+            }
+        }
+
+        int[] userPurchaseCountByGenre = DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactionsForAllGenres(DataManager.getInstance().getCurrentUser());
+        Restaurant[] finalSorted = new Restaurant[toBeSorted.length];
+        int finalSortedCurIndex = 0;
+
+        //-------------------
+        //sort by #transactions in all history for user
+        //-------------------
+        //for each genre
+        for(int u = 0; u < userPurchaseCountByGenre.length; u++){
+            int max = -1;
+            int curIndex = -1;
+
+            //find the index(genre) of highest occuring purchases
+            for(int z = 0; z < userPurchaseCountByGenre.length; z++) {
+                if (userPurchaseCountByGenre[z] > max) {
+                    max = userPurchaseCountByGenre[z];
+                    curIndex = z;
+                }
+            }
+
+            //apply the restaurants from that genre to the results array (these are already sorted by food spectrum)
+            for(Restaurant rest : tempSort.get(curIndex)) {
+                finalSorted[finalSortedCurIndex++] = rest;
+            }
+
+            //remove genre from sort since it was already targeted
+            userPurchaseCountByGenre[curIndex] = -1;
+        }
+        Log.e("SORT RESULT: ", Arrays.toString(finalSorted));
+        return finalSorted;
     }
 
     /*

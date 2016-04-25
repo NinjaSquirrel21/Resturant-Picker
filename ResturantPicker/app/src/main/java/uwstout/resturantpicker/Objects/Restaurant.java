@@ -99,7 +99,10 @@ public class Restaurant {
 
     //adds a new menu item to the restaurant, checking if the item exists in the menu already
     public void addMenuItem(Food newMenuItem){
-        if(getFoodFromMenuByName(newMenuItem.getDescription()) == null){this.menu.add(newMenuItem);}
+        if(getFoodFromMenuByName(newMenuItem.getDescription()) == null){
+            this.menu.add(newMenuItem);
+            this.calculateMenuCharacteristics(); //update menu avg spectrum
+        }
     }
 
     //adds a new menu items to the restaurant, only if the item does not exist in the menu already
@@ -114,6 +117,7 @@ public class Restaurant {
                     return false;
                 }
             }
+            this.calculateMenuCharacteristics(); //update menu avg spectrum
             //success if all menu items are added successfully
             return true;
         }
@@ -139,7 +143,6 @@ public class Restaurant {
         if(restaurant.getRating() != -1) this.rating = restaurant.getRating();
         if(restaurant.getPictureID() != null) this.pictureID = restaurant.getPictureID();
         if(restaurant.getMenu() != null) this.addMenuItems(restaurant.getMenu());
-        //private Food menuCharacteristics;
         return this;
     }
 
@@ -156,6 +159,7 @@ public class Restaurant {
     public int getCongestionLevel(){return this.congestionLevel;}
     public void updateCongestionLevel(int congestionLevel){this.congestionLevel = congestionLevel;}
     public String getGooglePlacesID(){return this.googlePlacesID;}
+    public Food getMenuCharacteristics(){return this.menuCharacteristics;}
 
     public String toString(){
         String result = "";

@@ -126,7 +126,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
                     Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
                     //DataManager.getInstance().getPreferenceCache().printCache();
-                    //DataManager.getInstance().getRestaurantDatabase().dumpDB();
+                    DataManager.getInstance().getRestaurantDatabase().dumpDB();
                 }
             });
         }

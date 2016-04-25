@@ -13,6 +13,7 @@ public class Transaction{
     private double finalPrice;
     private Vector<Food> itemsSold;
 
+
     public Transaction(String customer, String vendor, String vendorGoogleId, Date transactionTime, double finalPrice, Vector<Food> itemsSold){
         this.customer = customer;
         this.vendor = vendor;
