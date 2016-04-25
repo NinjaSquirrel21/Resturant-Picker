@@ -1,6 +1,7 @@
 package uwstout.resturantpicker.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,6 @@ public class MenuAdapter extends ArrayAdapter<Food> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
-
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.restaurant_list_item, null);

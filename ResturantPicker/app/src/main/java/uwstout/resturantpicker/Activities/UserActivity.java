@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
@@ -76,7 +77,6 @@ public class UserActivity extends AppCompatActivity{
 
     public static LoadingScreenFragment lf;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +120,8 @@ public class UserActivity extends AppCompatActivity{
                 .build();
 
         mGoogleApiClient.connect();
+
+
     }
 
 
@@ -318,11 +320,12 @@ public class UserActivity extends AppCompatActivity{
                     }
                     Object[] tempRestsObj = localRestaurants.toArray();
                     Restaurant[] tempRests = new Restaurant[tempRestsObj.length];
-                    Log.v("tempRests: ", Arrays.toString(tempRests));
+
                     int index = 0;
                     for(Object restaurant : tempRestsObj){
                         tempRests[index++] = (Restaurant)restaurant;
                     }
+                    Log.v("tempRests: ", Arrays.toString(tempRests));
                     localRestaurants = Arrays.asList(DataManager.getInstance().getRestaurantDatabase().restaurantSortByPreference(tempRests));
                 }
                 return null;
@@ -372,7 +375,6 @@ public class UserActivity extends AppCompatActivity{
        return super.onOptionsItemSelected(item);
     }
 
-
     /*
     This is a function that converts the in stream to a string to be parsed
      */
@@ -393,8 +395,6 @@ public class UserActivity extends AppCompatActivity{
         return jsonstr.toString();
     }
 
-
-
     /*
     A string builder that will allow for flexibility in making JSON calls
      */
@@ -414,13 +414,15 @@ public class UserActivity extends AppCompatActivity{
     }
 
     @Override
-    public void onResume() {
+    public void onResume(){
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        localRestaurants.clear();
+        //localRestaurants.clear();
         super.onPause();
     }
+
+
 }

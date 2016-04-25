@@ -74,7 +74,7 @@ public class Restaurant {
         }
 
         for(int k = 0; k < Food.NUMBER_OF_SPECTRUM_VALUES; k++) {
-            avgMenuFlavorSpectrum[k] /= Food.NUMBER_OF_SPECTRUM_VALUES;
+            avgMenuFlavorSpectrum[k] /= this.menu.size();
         }
 
         //calculate the menuCharacteristics every time the menu is updated
@@ -100,6 +100,7 @@ public class Restaurant {
     //adds a new menu item to the restaurant, checking if the item exists in the menu already
     public void addMenuItem(Food newMenuItem){
         if(getFoodFromMenuByName(newMenuItem.getDescription()) == null){
+            Log.e("newMenuItem", newMenuItem.toString());
             this.menu.add(newMenuItem);
             this.calculateMenuCharacteristics(); //update menu avg spectrum
         }
@@ -142,7 +143,7 @@ public class Restaurant {
         if(restaurant.getAddress() != null) this.address = restaurant.getAddress();
         if(restaurant.getRating() != -1) this.rating = restaurant.getRating();
         if(restaurant.getPictureID() != null) this.pictureID = restaurant.getPictureID();
-        if(restaurant.getMenu() != null) this.addMenuItems(restaurant.getMenu());
+        if(restaurant.getMenu() != null) this.menu = restaurant.getMenu();
         return this;
     }
 

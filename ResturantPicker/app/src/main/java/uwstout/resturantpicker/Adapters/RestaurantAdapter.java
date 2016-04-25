@@ -1,8 +1,11 @@
 package uwstout.resturantpicker.Adapters;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -34,7 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.Date;
+import java.util.logging.Handler;
 
+import uwstout.resturantpicker.Activities.UserActivity;
 import uwstout.resturantpicker.Objects.CredentialsManager;
 import uwstout.resturantpicker.Objects.DataManager;
 import uwstout.resturantpicker.Objects.Food;
@@ -72,6 +77,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         protected Restaurant restaurant;
 
         protected Vector<Food> currentRestuarntsFood;
+
 
 
         //added a click listener to act when "buy" is pressed, creating a new Transaction and running it through the data model. WIP
@@ -243,12 +249,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         Vector<Food> itemsSold = new Vector<Food>();
 
 
-
         public MenuFragment(String restName, Vector<Food> currentFood, Restaurant restaurant){
             title = restName;
             curFood = currentFood;
-             this.restaurant = restaurant;
+            this.restaurant = restaurant;
         }
+
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -284,16 +290,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     finalPrice *= 1.055; //tax rate
 
                     //String customer, String vendor, String vendorGoogleId, Date transactionTime, double finalPrice, Vector<Food> itemsSold
-                    DataManager.getInstance().completeTransaction(new Transaction(customer, vendor, vendorGoogleId, transactionTime, finalPrice, itemsSold));
+                    Transaction commitedTransaction = new Transaction(customer, vendor, vendorGoogleId, transactionTime, finalPrice, itemsSold);
+                    Log.v("Transaction logged: ", commitedTransaction.toString());
+                    DataManager.getInstance().completeTransaction(commitedTransaction);
 
                     Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
                     //DataManager.getInstance().getPreferenceCache().printCache();
                     //DataManager.getInstance().getRestaurantDatabase().dumpDB();
-
                     dismiss();
                 }
             });
-
 
             ListView lv = (ListView) rootView.findViewById(R.id.listView);
 
@@ -310,11 +316,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     TextView tv2 = (TextView) view.findViewById(R.id.restaurant_name);
                     //Log.v("TextViewResult","" + tv2.getText());
 
+
                     int test = Integer.parseInt(""+tv1.getText());
+
+
 
                     test++;
                     tv1.setText(""+ test);
-
 
                     Food temp = restaurant.getFoodFromMenuByName(""+tv2.getText());
                     finalPrice += temp.getValue();
@@ -332,8 +340,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
                     tv1.setText("-1");
 
-                    for(int i = 0; i < itemsSold.size(); i++){
-                        if(itemsSold.get(i).equals(tv2.getText())){
+                    for (int i = 0; i < itemsSold.size(); i++) {
+                        if (itemsSold.get(i).equals(tv2.getText())) {
                             itemsSold.remove(i);
                         }
                     }
