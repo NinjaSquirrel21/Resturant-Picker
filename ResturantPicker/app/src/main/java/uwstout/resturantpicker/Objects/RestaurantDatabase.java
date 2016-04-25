@@ -44,7 +44,7 @@ public class RestaurantDatabase{
 
     //function used for the database used in the PreferenceCache
     public void updateTableDepth(int tableDepth){
-        if(this.tableDepth > tableDepth){
+        if(this.tableDepth > tableDepth) {
             if(this.restaurants != null) {
                 for (int i = 0; i < Genres.NUMBEROFGENRES.getValue(); i++) {
                     if(this.restaurants.get(i) != null){
@@ -137,10 +137,13 @@ public class RestaurantDatabase{
     //merges two restaurants with the same GID, retrusn merged Restaurant (current instance). will prefer attributes in the new one if they overlap.
     public Restaurant merge(Restaurant restaurant){
         String gid = restaurant.getGooglePlacesID();
+        Log.v("GID to merge...:", gid);
         if(gid != null) {
             Restaurant result = fetchCopyOfRestaurantByID(gid);
+
             if(result != null){
-                result.merge(restaurant);
+                result = result.merge(restaurant);
+                Log.e("post-merge test..:", result.toString());
                 return result;
             }
         }
@@ -260,14 +263,12 @@ public class RestaurantDatabase{
             }
         }
 
-
         Log.e("Current User: ", DataManager.getInstance().getCurrentUser());
         int[] userPurchaseCountByGenre = Arrays.copyOf(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactionsForAllGenres(DataManager.getInstance().getCurrentUser()), Food.NUMBER_OF_SPECTRUM_VALUES);
         Restaurant[] finalSorted = new Restaurant[toBeSorted.length];
         int finalSortedCurIndex = 0;
 
         Log.e("Trans per Genre: ", Arrays.toString(userPurchaseCountByGenre));
-
 
         //-------------------
         //sort by #transactions in all history for user

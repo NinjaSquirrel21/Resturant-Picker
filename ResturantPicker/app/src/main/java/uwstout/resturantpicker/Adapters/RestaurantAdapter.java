@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +40,7 @@ import java.util.Vector;
 import java.util.Date;
 import java.util.logging.Handler;
 
+import uwstout.resturantpicker.Activities.LoginActivity;
 import uwstout.resturantpicker.Activities.UserActivity;
 import uwstout.resturantpicker.Objects.CredentialsManager;
 import uwstout.resturantpicker.Objects.DataManager;
@@ -95,6 +97,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //Log.e("Card's Restaurant: ", ViewHolder.this.restaurant.toString());
                     currentRestuarntsFood = ViewHolder.this.restaurant.getMenu();
                     final MenuFragment menuFragment= new MenuFragment((String) titleText.getText(), currentRestuarntsFood, restaurant);
                     menuFragment.show(fragman, "Sample Fragment");
@@ -114,7 +117,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     Vector<Food> itemsSold = new Vector<Food>();
                     double finalPrice = 0;
 
-                    //TODO: Make this more robust, perhaps iterate through a loop of possible options from the menu list.
+
                     //      for example, say that when the menu butt and prices, with check boxes next to them.
                     //      when the buy button is pressed, it wouldon is pressed, a Fragment pops up on top of the RestaurantCard and
                     //      contains a scrolling list of their menu simply iterate through the whole list of check boxes generated and
@@ -252,7 +255,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         public MenuFragment(String restName, Vector<Food> currentFood, Restaurant restaurant){
             title = restName;
             curFood = currentFood;
+
+            //Log.v("Food vect:", currentFood.toString());
             this.restaurant = restaurant;
+            itemsSold = new Vector<Food>();
         }
 
 
@@ -281,7 +287,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
                   //  Food temp = restaurant.getFoodFromMenuByName("test");
                     //ViewHolder.this.restaurant.setGenre(RestaurantDatabase.Genres.PIZZA);
-                    Log.v("Rest. toString: ", restaurant.toString());
+                    //Log.v("Rest. toString: ", restaurant.toString());
               //      if(temp != null) {
               //          itemsSold.add(temp);
                 //        finalPrice += temp.getValue();
@@ -292,9 +298,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     //String customer, String vendor, String vendorGoogleId, Date transactionTime, double finalPrice, Vector<Food> itemsSold
                     Transaction commitedTransaction = new Transaction(customer, vendor, vendorGoogleId, transactionTime, finalPrice, itemsSold);
                     Log.v("Transaction logged: ", commitedTransaction.toString());
-                    DataManager.getInstance().completeTransaction(commitedTransaction);
+                    if(DataManager.getInstance().completeTransaction(commitedTransaction)){
+                        //TODO: I cant get this to work. Need a reference to the UserActivity's contexT?
+                        //Toast toast = Toast.makeText(MenuFragment.this, "Thank you for your purchase! Your total was " + Double.toString(finalPrice) + ".", Toast.LENGTH_SHORT);
+                        //toast.show();
+                    }
 
-                    Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
+                    //Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
                     //DataManager.getInstance().getPreferenceCache().printCache();
                     //DataManager.getInstance().getRestaurantDatabase().dumpDB();
                     dismiss();
@@ -317,14 +327,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     //Log.v("TextViewResult","" + tv2.getText());
 
 
-                    int test = Integer.parseInt(""+tv1.getText());
-
+                    int test = Integer.parseInt("" + tv1.getText());
 
 
                     test++;
-                    tv1.setText(""+ test);
+                    tv1.setText("" + test);
 
-                    Food temp = restaurant.getFoodFromMenuByName(""+tv2.getText());
+
+                    Food temp = restaurant.getFoodFromMenuByName("" + tv2.getText());
                     finalPrice += temp.getValue();
                     itemsSold.add(temp);
                 }

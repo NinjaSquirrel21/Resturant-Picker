@@ -271,6 +271,8 @@ public class UserActivity extends AppCompatActivity{
                     //each iteration could have n^2 worst case runtime, assumed for filtering.
                     //being able to do this in parallel really helps, since the larger the data set, the higher the chance it will get closer to n^2 complexity
                     //since eadch entry is unique
+                    Log.e("pre-filter db state:", "asd");
+                    DataManager.getInstance().getRestaurantDatabase().dumpDB();
                     for(int j=0;j<len;j++)
                     {
                         rating = 0;
@@ -298,21 +300,25 @@ public class UserActivity extends AppCompatActivity{
                                 }
                                 // Log.v("Picture String", "" + pictureString);
                             }
+                            if(resarray.getJSONObject(j).has("website")){
+                                //TODO: do the thing!, also featuring Restaurant.getURL()
+                            }
 
-                            //TODO: make a schnazzy filter!
                             //sample filter, adds restaurants to the screen only if they exist in DB (fetch by place ID)
                             //NOTE: The db is being populated with 3 hard-coded entries, which only have the place ID. Update the method in LoginActivity if you need to add more information to it
+
                             if(database != null){
-                                Restaurant temp = new Restaurant(restName, address, id, rating, pictureString);
+                                Restaurant temp = new Restaurant(restName, address, id, rating, pictureString, "websiteurlgoeshere");
                                 Restaurant mergedRestaurant = database.getRestaurantDatabase().merge(temp);
+
                                 //will only add to list if merge is successful. merge will only be successful if the restaurant already exists in the service.
                                 //NOTE: It is NOT the filter's responsibility to add these restaurants to the databases.
                                 // If the Places ID is found within the merge search, it will mutate the existing entry with the values of the Restaurant passed into the merge, allowing the filter to update existing entries only.
                                 if(mergedRestaurant != null){
+                                    //Log.e("Restaurant test..:", mergedRestaurant.toString());
                                     localRestaurants.add(mergedRestaurant);
-                                    Log.v("Restaurant added:", mergedRestaurant.toString());
                                 }
-                                Log.v("Restaurant names", "" + "~" + restName + "~" + address + "~" + id);
+                                //Log.v("Restaurant names", "" + "~" + restName + "~" + address + "~" + id);
                             }
                         }catch(JSONException e){
                             e.printStackTrace();
@@ -325,7 +331,7 @@ public class UserActivity extends AppCompatActivity{
                     for(Object restaurant : tempRestsObj){
                         tempRests[index++] = (Restaurant)restaurant;
                     }
-                    Log.v("tempRests: ", Arrays.toString(tempRests));
+                    //Log.v("tempRests: ", Arrays.toString(tempRests));
                     localRestaurants = Arrays.asList(DataManager.getInstance().getRestaurantDatabase().restaurantSortByPreference(tempRests));
                 }
                 return null;

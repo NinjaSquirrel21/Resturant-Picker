@@ -8,7 +8,6 @@ import java.util.Vector;
 /**
  * Created by Barrett on 4/8/2016.
  * Used by LoginActivity and its' Fragments to keep track of userbase.
- * TODO: Implement using actual database for users.
  */
 public class CredentialsManager {
     public enum AccountType{

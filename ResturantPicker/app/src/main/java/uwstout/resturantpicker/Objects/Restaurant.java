@@ -24,6 +24,7 @@ public class Restaurant {
     private String address;
     private long rating = -1;
     private String pictureID;
+    private String url;
 
     public Restaurant(){
         this.name = "Test1";
@@ -52,13 +53,14 @@ public class Restaurant {
         this.menu = menu;
     }
 
-    public Restaurant(String name, String address, String googlePlacesID, long rating, String pictureID){
+    public Restaurant(String name, String address, String googlePlacesID, long rating, String pictureID, String url){
         this.menu = new Vector<Food>();
         this.name = name;
         this.address = address;
         this.googlePlacesID = googlePlacesID;
         this.rating = rating;
         this.pictureID = pictureID;
+        this.url = url;
     }
 
     //calculates the average values for all food items in the food spectrum
@@ -99,8 +101,8 @@ public class Restaurant {
 
     //adds a new menu item to the restaurant, checking if the item exists in the menu already
     public void addMenuItem(Food newMenuItem){
+        if(this.menu == null)this.menu = new Vector<Food>();
         if(getFoodFromMenuByName(newMenuItem.getDescription()) == null){
-            Log.e("newMenuItem", newMenuItem.toString());
             this.menu.add(newMenuItem);
             this.calculateMenuCharacteristics(); //update menu avg spectrum
         }
@@ -108,6 +110,7 @@ public class Restaurant {
 
     //adds a new menu items to the restaurant, only if the item does not exist in the menu already
     public boolean addMenuItems(Vector<Food> newMenuItems){
+        if(this.menu == null)this.menu = new Vector<Food>();
         if(newMenuItems != null) {
             for (int i = 0; i < newMenuItems.size(); i++) {
                 if (getFoodFromMenuByName(newMenuItems.get(i).getDescription()) == null) {
@@ -143,7 +146,14 @@ public class Restaurant {
         if(restaurant.getAddress() != null) this.address = restaurant.getAddress();
         if(restaurant.getRating() != -1) this.rating = restaurant.getRating();
         if(restaurant.getPictureID() != null) this.pictureID = restaurant.getPictureID();
-        if(restaurant.getMenu() != null) this.menu = restaurant.getMenu();
+        if(restaurant.getURL() != null){this.url = restaurant.getURL();}
+        if(restaurant.getMenu() != null){
+            if(restaurant.getMenu().size() > 0) {
+                //Log.v("Menu overridden with:", restaurant.getMenu().toString());
+                this.menu = restaurant.getMenu();
+            }
+        }
+        if(restaurant.getURL() != null){this.url = restaurant.getURL();}
         return this;
     }
 
@@ -161,6 +171,7 @@ public class Restaurant {
     public void updateCongestionLevel(int congestionLevel){this.congestionLevel = congestionLevel;}
     public String getGooglePlacesID(){return this.googlePlacesID;}
     public Food getMenuCharacteristics(){return this.menuCharacteristics;}
+    public String getURL(){return this.url;}
 
     public String toString(){
         String result = "";

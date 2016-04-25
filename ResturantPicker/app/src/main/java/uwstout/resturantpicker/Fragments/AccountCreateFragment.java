@@ -57,7 +57,6 @@ public class AccountCreateFragment extends Fragment{
                     }else{
                         mListener.sendToast("Error when creating account.");
                     }
-
                 }
             }
         });
