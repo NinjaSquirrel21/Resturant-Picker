@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -167,6 +169,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         new populateCards(holder, position).execute();
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -252,6 +255,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         Vector<Food> itemsSold = new Vector<Food>();
 
 
+
         public MenuFragment(String restName, Vector<Food> currentFood, Restaurant restaurant){
             title = restName;
             curFood = currentFood;
@@ -307,6 +311,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     //Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
                     //DataManager.getInstance().getPreferenceCache().printCache();
                     //DataManager.getInstance().getRestaurantDatabase().dumpDB();
+
+                    NumberFormat formatter = new DecimalFormat("#0.00");
+                    Toast.makeText(MenuFragment.this.getContext(), "Total Cost: $" + formatter.format(finalPrice) + "\nThank you for your purchase", Toast.LENGTH_SHORT).show();
+
                     dismiss();
                 }
             });

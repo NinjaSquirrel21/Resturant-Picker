@@ -218,6 +218,8 @@ public class UserActivity extends AppCompatActivity{
             adapter = new RestaurantAdapter(localRestaurants, context, fragman);
             recyclerView.setAdapter(adapter);
             fragman.beginTransaction().remove(lf).commit();
+
+
         }
 
         /*

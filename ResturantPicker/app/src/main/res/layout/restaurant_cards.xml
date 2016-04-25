@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="270dp"
         card_view:cardCornerRadius="4dp"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:background="#7f7f7f">
 
         <RelativeLayout
             android:id="@+id/cardBackground"
@@ -59,7 +60,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Buy"
+                android:text="Visit Site"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
