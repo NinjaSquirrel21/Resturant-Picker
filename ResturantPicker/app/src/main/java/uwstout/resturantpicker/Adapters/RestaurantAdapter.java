@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,15 +90,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                 @Override
                 public void onClick(View v) {
                     currentRestuarntsFood = ViewHolder.this.restaurant.getMenu();
-                    final MenuFragment menuFragment= new MenuFragment((String) titleText.getText(), currentRestuarntsFood);
+                    final MenuFragment menuFragment= new MenuFragment((String) titleText.getText(), currentRestuarntsFood, restaurant);
                     menuFragment.show(fragman, "Sample Fragment");
                 }
             });
+/*
+            MOVED TO FRAGMENT
 
             buyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     //load up a Transaction object
                     String customer = DataManager.getInstance().getCurrentUser();
                     String vendorGoogleId = ViewHolder.this.restaurant.getGooglePlacesID();
@@ -129,6 +132,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     DataManager.getInstance().getRestaurantDatabase().dumpDB();
                 }
             });
+            */
         }
     }
 
@@ -232,32 +236,113 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     public static class MenuFragment extends DialogFragment {
         String title;
         Vector<Food> curFood;
-         public MenuFragment(String restName, Vector<Food> currentFood){
+        int orderCount = 0;
+        Button buyButton;
+        Restaurant restaurant;
+        double finalPrice = 0;
+        Vector<Food> itemsSold = new Vector<Food>();
+
+
+
+        public MenuFragment(String restName, Vector<Food> currentFood, Restaurant restaurant){
             title = restName;
             curFood = currentFood;
+             this.restaurant = restaurant;
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
             getDialog().setTitle(title);
-            List<String> list1 = new ArrayList<>();
-            for(int i = 0; i < curFood.size();i++){
-                list1.add(curFood.get(i).getDescription());
-            }
+            buyButton = (Button) rootView.findViewById(R.id.buy_button);
+
+            buyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //load up a Transaction object
+                    String customer = DataManager.getInstance().getCurrentUser();
+                    String vendorGoogleId = restaurant.getGooglePlacesID();
+                    String vendor = DataManager.getInstance().getCredentialsManager().getUsernameBasedOnGooglePlaceID(vendorGoogleId);
+                    Date transactionTime = new Date();
+
+                    //TODO: Make this more robust, perhaps iterate through a loop of possible options from the menu list.
+                    //      for example, say that when the menu butt and prices, with check boxes next to them.
+                    //      when the buy button is pressed, it wouldon is pressed, a Fragment pops up on top of the RestauTrantCard and
+                    //      contains a scrolling list of their menu simply iterate through the whole list of check boxes generated and
+                    //      add all checked ones to a list of food items to add to the transaction
+
+
+
+                  //  Food temp = restaurant.getFoodFromMenuByName("test");
+                    //ViewHolder.this.restaurant.setGenre(RestaurantDatabase.Genres.PIZZA);
+                    Log.v("Rest. toString: ", restaurant.toString());
+              //      if(temp != null) {
+              //          itemsSold.add(temp);
+                //        finalPrice += temp.getValue();
+                //    }
+
+                    finalPrice *= 1.055; //tax rate
+
+                    //String customer, String vendor, String vendorGoogleId, Date transactionTime, double finalPrice, Vector<Food> itemsSold
+                    DataManager.getInstance().completeTransaction(new Transaction(customer, vendor, vendorGoogleId, transactionTime, finalPrice, itemsSold));
+
+                    Log.e("Total sales: ", Integer.toString(DataManager.getInstance().getCredentialsManager().getTotalNumberOfTransactions(customer)));
+                    //DataManager.getInstance().getPreferenceCache().printCache();
+                    //DataManager.getInstance().getRestaurantDatabase().dumpDB();
+
+                    dismiss();
+                }
+            });
+
 
             ListView lv = (ListView) rootView.findViewById(R.id.listView);
 
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+            MenuAdapter arrayAdapter = new MenuAdapter(
                     getActivity(),
-                    android.R.layout.simple_list_item_1,
-                    list1 );
+                    R.layout.restaurant_list_item,
+                    curFood );
 
             lv.setAdapter(arrayAdapter);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    TextView tv1 = (TextView) view.findViewById(R.id.order_count);
+                    TextView tv2 = (TextView) view.findViewById(R.id.restaurant_name);
+                    //Log.v("TextViewResult","" + tv2.getText());
+
+                    int test = Integer.parseInt(""+tv1.getText());
+
+                    test++;
+                    tv1.setText(""+ test);
+
+
+                    Food temp = restaurant.getFoodFromMenuByName(""+tv2.getText());
+                    finalPrice += temp.getValue();
+                    itemsSold.add(temp);
+                }
+            });
+
+            lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    TextView tv1 = (TextView) view.findViewById(R.id.order_count);
+                    TextView tv2 = (TextView) view.findViewById(R.id.restaurant_name);
+
+                    orderCount = -1;
+
+                    tv1.setText("-1");
+
+                    for(int i = 0; i < itemsSold.size(); i++){
+                        if(itemsSold.get(i).equals(tv2.getText())){
+                            itemsSold.remove(i);
+                        }
+                    }
+                    return false;
+                }
+            });
             return rootView;
         }
     }
-
 
 }
 
